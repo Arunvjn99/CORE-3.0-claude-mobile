@@ -34,13 +34,14 @@ class FlowScaffold extends StatelessWidget {
     final progress = currentStep / totalSteps;
     final topPad = MediaQuery.of(context).padding.top;
 
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: scheme.surfaceContainerLowest,
       body: Column(
         children: [
           // Custom header with step indicator
           Container(
-            color: Colors.white,
+            color: scheme.surface,
             padding: EdgeInsets.fromLTRB(20, topPad + 12, 20, 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,10 +55,10 @@ class FlowScaffold extends StatelessWidget {
                           width: 36,
                           height: 36,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF3F4F6),
+                            color: scheme.surfaceContainerHigh,
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(Icons.arrow_back, size: 18, color: Color(0xFF374151)),
+                          child: Icon(Icons.arrow_back, size: 18, color: scheme.onSurface),
                         ),
                       )
                     else
@@ -69,17 +70,17 @@ class FlowScaffold extends StatelessWidget {
                         children: [
                           Text(
                             title,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w700,
-                              color: Color(0xFF111827),
+                              color: scheme.onSurface,
                             ),
                           ),
                           Text(
                             'Step $currentStep of $totalSteps',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 11,
-                              color: Color(0xFF6B7280),
+                              color: scheme.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -116,7 +117,7 @@ class FlowScaffold extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: done || active
                               ? AppColors.primary
-                              : const Color(0xFFE5E7EB),
+                              : scheme.surfaceContainerHigh,
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
@@ -145,7 +146,7 @@ class FlowScaffold extends StatelessWidget {
               MediaQuery.of(context).padding.bottom + 12,
             ),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: scheme.surface,
               border: const Border(
                 top: BorderSide(color: Color(0xFFE5E7EB), width: 0.5),
               ),

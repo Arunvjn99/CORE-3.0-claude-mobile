@@ -13,6 +13,7 @@ import '../../features/enrollment/pages/plan_selection_page.dart';
 import '../../features/enrollment/pages/contribution_page.dart';
 import '../../features/enrollment/pages/contribution_source_page.dart';
 import '../../features/enrollment/pages/auto_increase_page.dart';
+import '../../features/enrollment/pages/auto_increase_setup_page.dart';
 import '../../features/enrollment/pages/investment_strategy_page.dart';
 import '../../features/enrollment/pages/retirement_readiness_page.dart';
 import '../../features/enrollment/pages/review_enrollment_page.dart';
@@ -69,6 +70,7 @@ class AppRoutes {
   static const enrollmentContribution = '/enrollment/contribution';
   static const enrollmentSource = '/enrollment/source';
   static const enrollmentAutoIncrease = '/enrollment/auto-increase';
+  static const enrollmentAutoIncreaseSetup = '/enrollment/auto-increase-setup';
   static const enrollmentInvestment = '/enrollment/investment';
   static const enrollmentReadiness = '/enrollment/readiness';
   static const enrollmentReview = '/enrollment/review';
@@ -182,6 +184,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
           path: AppRoutes.enrollmentAutoIncrease,
           builder: (_, __) => const AutoIncreasePage()),
+      GoRoute(
+          path: AppRoutes.enrollmentAutoIncreaseSetup,
+          builder: (_, __) => const AutoIncreaseSetupPage()),
       GoRoute(
           path: AppRoutes.enrollmentInvestment,
           builder: (_, __) => const InvestmentStrategyPage()),
