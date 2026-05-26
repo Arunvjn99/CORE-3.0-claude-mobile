@@ -123,35 +123,26 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isAuth = ref.read(isAuthenticatedProvider);
       final path = state.matchedLocation;
 
-      const publicPaths = {
-        AppRoutes.splash,
-        AppRoutes.walkthrough,
-        AppRoutes.login,
-        AppRoutes.signup,
-        AppRoutes.forgotPassword,
-        AppRoutes.verifyOtp,
-      };
-
-      final isPublic = publicPaths.any((p) => path.startsWith(p));
-      final isEnrollment = path.startsWith('/enrollment');
-
-      if (!isAuth && !isPublic && !isEnrollment) {
-        return AppRoutes.login;
-      }
-
-      // Splash/walkthrough handle their own navigation — don't redirect
+      // Splash and walkthrough always handle their own routing
       if (path == AppRoutes.splash || path == AppRoutes.walkthrough) {
         return null;
       }
 
-      if (isAuth && isPublic) {
-        final enrollment = ref.read(enrollmentProvider);
-        return enrollment.status == EnrollmentStatus.complete
-            ? AppRoutes.postEnrollmentDashboard
-            : AppRoutes.preEnrollmentDashboard;
+      // Auth-only paths (exact or prefix, but NOT '/' which is splash)
+      final isAuthPage = path == AppRoutes.login ||
+          path == AppRoutes.signup ||
+          path == AppRoutes.forgotPassword ||
+          path.startsWith(AppRoutes.verifyOtp);
+
+      final isEnrollment = path.startsWith('/enrollment');
+
+      // Not logged in → send to login (except auth pages and enrollment)
+      if (!isAuth && !isAuthPage && !isEnrollment) {
+        return AppRoutes.login;
       }
 
-      if (isAuth && path == AppRoutes.dashboard) {
+      // Logged in and on an auth page → go to dashboard
+      if (isAuth && isAuthPage) {
         final enrollment = ref.read(enrollmentProvider);
         return enrollment.status == EnrollmentStatus.complete
             ? AppRoutes.postEnrollmentDashboard
@@ -210,13 +201,6 @@ final routerProvider = Provider<GoRouter>((ref) {
         routes: [
           GoRoute(
               path: AppRoutes.preEnrollmentDashboard,
-              redirect: (_, __) {
-                final enrollment = ref.read(enrollmentProvider);
-                if (enrollment.status == EnrollmentStatus.complete) {
-                  return AppRoutes.postEnrollmentDashboard;
-                }
-                return null;
-              },
               builder: (_, __) => const PreEnrollmentDashboard()),
           GoRoute(
               path: AppRoutes.postEnrollmentDashboard,
