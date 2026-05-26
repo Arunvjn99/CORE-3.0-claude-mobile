@@ -64,13 +64,11 @@ class _PostEnrollmentDashboardState
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 120),
               sliver: SliverList(
                 delegate: SliverChildListDelegate([
-                  Transform.translate(
-                    offset: const Offset(0, -28),
-                    child: _BalanceCard(companyTheme: companyTheme),
-                  ),
+                  _BalanceCard(companyTheme: companyTheme),
+                  const SizedBox(height: 16),
                   const _QuickStats(),
                   const SizedBox(height: 24),
                   _PerformanceChart(companyTheme: companyTheme),
@@ -117,7 +115,7 @@ class _DashboardHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final topPad = MediaQuery.of(context).padding.top;
     return Container(
-      height: 160 + topPad,
+      height: 130 + topPad,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: companyTheme.gradientColors,

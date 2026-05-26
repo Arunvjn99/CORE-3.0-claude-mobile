@@ -14,8 +14,7 @@ class AppShell extends ConsumerWidget {
   int _selectedIndex(String location) {
     if (location.startsWith(AppRoutes.transactions)) return 1;
     if (location.startsWith(AppRoutes.investments)) return 2;
-    if (location.startsWith(AppRoutes.aiAssistant)) return 3;
-    if (location.startsWith(AppRoutes.profile)) return 4;
+    if (location.startsWith(AppRoutes.profile)) return 3;
     return 0;
   }
 
@@ -25,68 +24,115 @@ class AppShell extends ConsumerWidget {
     final selectedIndex = _selectedIndex(location);
     final enrollmentStatus = ref.watch(enrollmentProvider).status;
     final isEnrolled = enrollmentStatus == EnrollmentStatus.complete;
+    final bottomPad = MediaQuery.of(context).padding.bottom;
 
     return Scaffold(
       body: child,
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: const Border(
-            top: BorderSide(color: Color(0xFFE5E7EB), width: 0.5),
+      floatingActionButton: _AiFab(
+        isSelected: location.startsWith(AppRoutes.aiAssistant),
+        onTap: () => context.go(AppRoutes.aiAssistant),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        height: 64 + bottomPad,
+        padding: EdgeInsets.zero,
+        elevation: 8,
+        shadowColor: Colors.black26,
+        surfaceTintColor: Colors.white,
+        color: Colors.white,
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 8,
+        child: SizedBox(
+          height: 64,
+          child: Row(
+            children: [
+              _NavItem(
+                icon: Icons.home_outlined,
+                activeIcon: Icons.home,
+                label: 'Home',
+                isSelected: selectedIndex == 0,
+                onTap: () => context.go(
+                  isEnrolled
+                      ? AppRoutes.postEnrollmentDashboard
+                      : AppRoutes.preEnrollmentDashboard,
+                ),
+              ),
+              _NavItem(
+                icon: Icons.swap_horiz_outlined,
+                activeIcon: Icons.swap_horiz,
+                label: 'Transactions',
+                isSelected: selectedIndex == 1,
+                onTap: () => context.go(AppRoutes.transactions),
+              ),
+              // Center spacer for FAB notch
+              const Expanded(child: SizedBox()),
+              _NavItem(
+                icon: Icons.pie_chart_outline,
+                activeIcon: Icons.pie_chart,
+                label: 'Investments',
+                isSelected: selectedIndex == 2,
+                onTap: () => context.go(AppRoutes.investments),
+              ),
+              _NavItem(
+                icon: Icons.person_outline,
+                activeIcon: Icons.person,
+                label: 'Profile',
+                isSelected: selectedIndex == 3,
+                onTap: () => context.go(AppRoutes.profile),
+              ),
+            ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AiFab extends StatelessWidget {
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _AiFab({required this.isSelected, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF4F46E5), Color(0xFF7C3AED)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
+              color: const Color(0xFF4F46E5).withValues(alpha: 0.45),
               blurRadius: 16,
-              offset: const Offset(0, -4),
+              offset: const Offset(0, 6),
             ),
           ],
+          border: isSelected
+              ? Border.all(color: Colors.white, width: 3)
+              : null,
         ),
-        child: SafeArea(
-          top: false,
-          child: SizedBox(
-            height: 64,
-            child: Row(
-              children: [
-                _NavItem(
-                  icon: Icons.home_outlined,
-                  activeIcon: Icons.home,
-                  label: 'Home',
-                  isSelected: selectedIndex == 0,
-                  onTap: () => context.go(
-                    isEnrolled
-                        ? AppRoutes.postEnrollmentDashboard
-                        : AppRoutes.preEnrollmentDashboard,
-                  ),
-                ),
-                _NavItem(
-                  icon: Icons.swap_horiz_outlined,
-                  activeIcon: Icons.swap_horiz,
-                  label: 'Transactions',
-                  isSelected: selectedIndex == 1,
-                  onTap: () => context.go(AppRoutes.transactions),
-                ),
-                _NavItem(
-                  icon: Icons.pie_chart_outline,
-                  activeIcon: Icons.pie_chart,
-                  label: 'Investments',
-                  isSelected: selectedIndex == 2,
-                  onTap: () => context.go(AppRoutes.investments),
-                ),
-                _AiNavItem(
-                  isSelected: selectedIndex == 3,
-                  onTap: () => context.go(AppRoutes.aiAssistant),
-                ),
-                _NavItem(
-                  icon: Icons.person_outline,
-                  activeIcon: Icons.person,
-                  label: 'Profile',
-                  isSelected: selectedIndex == 4,
-                  onTap: () => context.go(AppRoutes.profile),
-                ),
-              ],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.psychology, color: Colors.white, size: 24),
+            const Text(
+              'AI',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 9,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.5,
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -139,59 +185,6 @@ class _NavItem extends StatelessWidget {
                 fontSize: 10,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
                 color: isSelected ? AppColors.primary : const Color(0xFF9CA3AF),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _AiNavItem extends StatelessWidget {
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _AiNavItem({required this.isSelected, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        behavior: HitTestBehavior.opaque,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF4F46E5), Color(0xFF7C3AED)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF4F46E5).withValues(alpha: 0.35),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: const Icon(Icons.psychology, color: Colors.white, size: 22),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              'AI',
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w700,
-                color: isSelected
-                    ? const Color(0xFF4F46E5)
-                    : const Color(0xFF9CA3AF),
               ),
             ),
           ],
