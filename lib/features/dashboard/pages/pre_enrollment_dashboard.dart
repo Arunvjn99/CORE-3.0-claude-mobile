@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -43,8 +44,9 @@ class _PreEnrollmentDashboardState extends ConsumerState<PreEnrollmentDashboard>
     final userAsync = ref.watch(userProfileProvider);
     final firstName = userAsync.valueOrNull?.firstName ?? '';
 
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: scheme.surfaceContainerLowest,
       body: CustomScrollView(
         slivers: [
           // Gradient hero header
@@ -86,6 +88,18 @@ class _PreEnrollmentDashboardState extends ConsumerState<PreEnrollmentDashboard>
                 _FinalCTA(
                   companyTheme: companyTheme,
                   onStart: () => context.push(AppRoutes.enrollmentPlan),
+                ),
+                const SizedBox(height: 24),
+
+                // Learning Hub Card
+                _LearningCard(
+                  onLearnMore: () => context.push(AppRoutes.enrollmentPlan),
+                ),
+                const SizedBox(height: 20),
+
+                // Core AI + Advisor bento cards
+                _BentoCards(
+                  onAiTap: () => context.go(AppRoutes.aiAssistant),
                 ),
               ]),
             ),
@@ -348,10 +362,11 @@ class _EmployerMatchCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -566,10 +581,11 @@ class _BenefitCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -594,16 +610,16 @@ class _BenefitCard extends StatelessWidget {
           const Spacer(),
           Text(
             benefit.title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF111827),
+              color: scheme.onSurface,
             ),
           ),
           const SizedBox(height: 3),
           Text(
             benefit.desc,
-            style: const TextStyle(fontSize: 11, color: Color(0xFF6B7280), height: 1.4),
+            style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant, height: 1.4),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -836,12 +852,13 @@ class _PlanTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: scheme.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
@@ -871,10 +888,10 @@ class _PlanTile extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF111827),
+                          color: scheme.onSurface,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -1003,4 +1020,322 @@ class _FinalCTA extends StatelessWidget {
       ),
     );
   }
+}
+
+// ─── Learning Hub Card ───────────────────────────────────────────────────────
+class _LearningCard extends StatelessWidget {
+  final VoidCallback onLearnMore;
+  const _LearningCard({required this.onLearnMore});
+
+  static const _items = [
+    'How 401(k) employer matching works',
+    'Tax advantages of pre-tax vs Roth',
+    'Investment strategies for every stage',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF5B8CEF), Color(0xFF3B6FE0)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Stack(
+        children: [
+          // Glow orbs
+          Positioned(top: -20, left: -20, child: Container(width: 120, height: 120, decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.white.withValues(alpha: 0.06)))),
+          Positioned(bottom: -30, right: -30, child: Container(width: 160, height: 160, decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFF3B6FE0).withValues(alpha: 0.4)))),
+          Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Retirement\nLearning Hub', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Colors.white, height: 1.15)),
+                const SizedBox(height: 6),
+                Text('Everything you need to make smart retirement decisions.', style: TextStyle(fontSize: 13, color: Colors.white.withValues(alpha: 0.75), height: 1.5)),
+                const SizedBox(height: 16),
+                ..._items.map((item) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 20, height: 20,
+                        decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.25), shape: BoxShape.circle),
+                        child: const Icon(Icons.check, color: Colors.white, size: 12),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(child: Text(item, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.white.withValues(alpha: 0.9)))),
+                    ],
+                  ),
+                )),
+                const SizedBox(height: 16),
+                GestureDetector(
+                  onTap: onLearnMore,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(100),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Learn My Plan', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white)),
+                        SizedBox(width: 6),
+                        Icon(Icons.chevron_right, color: Colors.white, size: 16),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── Bento Cards (AI + Advisor) ──────────────────────────────────────────────
+class _BentoCards extends StatefulWidget {
+  final VoidCallback onAiTap;
+  const _BentoCards({required this.onAiTap});
+
+  @override
+  State<_BentoCards> createState() => _BentoCardsState();
+}
+
+class _BentoCardsState extends State<_BentoCards> {
+  static const _advisors = [
+    _AdvisorChip('Sarah Jenkins', 'SJ', Color(0xFF60A5FA), Color(0xFF3B82F6)),
+    _AdvisorChip('Alex Carter', 'AC', Color(0xFF34D399), Color(0xFF059669)),
+    _AdvisorChip('Maya Patel', 'MP', Color(0xFFFBBF24), Color(0xFFD97706)),
+    _AdvisorChip('James Liu', 'JL', Color(0xFFF472B6), Color(0xFFDB2777)),
+  ];
+
+  int _activeChip = 0;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(milliseconds: 1800), (_) {
+      if (mounted) setState(() => _activeChip = (_activeChip + 1) % _advisors.length);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Column(
+      children: [
+        // Core AI card
+        GestureDetector(
+          onTap: widget.onAiTap,
+          child: Container(
+            decoration: BoxDecoration(
+              color: scheme.surface,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: scheme.outline.withValues(alpha: 0.4)),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 12, offset: const Offset(0, 4))],
+            ),
+            child: Column(
+              children: [
+                // Mockup
+                Container(
+                  decoration: BoxDecoration(color: scheme.surfaceContainerLowest, borderRadius: const BorderRadius.vertical(top: Radius.circular(20))),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      // AI header chip
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: scheme.surface,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: scheme.outline.withValues(alpha: 0.4)),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 32, height: 32,
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(colors: [AppColors.primary, Color(0xFF7C3AED)]),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(Icons.psychology, color: Colors.white, size: 16),
+                            ),
+                            const SizedBox(width: 10),
+                            Text('Core AI', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: scheme.onSurface)),
+                            const Spacer(),
+                            Container(
+                              width: 8, height: 8,
+                              decoration: const BoxDecoration(color: AppColors.success, shape: BoxShape.circle),
+                            ),
+                            const SizedBox(width: 4),
+                            Text('Online', style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant)),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      // Chat bubbles
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                          decoration: const BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: BorderRadius.only(topLeft: Radius.circular(14), topRight: Radius.circular(14), bottomLeft: Radius.circular(14)),
+                          ),
+                          child: const Text('What is my loan eligibility?', style: TextStyle(fontSize: 12, color: Colors.white)),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: scheme.surfaceContainerHigh,
+                            borderRadius: const BorderRadius.only(topLeft: Radius.circular(14), topRight: Radius.circular(14), bottomRight: Radius.circular(14)),
+                          ),
+                          child: Text('You may be eligible for up to \$15,000 based on your balance.', style: TextStyle(fontSize: 12, color: scheme.onSurface)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Text + CTA
+                Padding(
+                  padding: const EdgeInsets.all(18),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Ask Core AI', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: scheme.onSurface)),
+                            Text('Get instant answers about your retirement plan.', style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant)),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(10)),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('Chat', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.white)),
+                            SizedBox(width: 4),
+                            Icon(Icons.chevron_right, color: Colors.white, size: 16),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        // Advisor card (dark)
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: const LinearGradient(
+              colors: [Color(0xFF1E2D4A), Color(0xFF0F172A)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: Stack(
+            children: [
+              // Glow
+              Positioned(left: -30, top: 0, child: Container(width: 150, height: 150, decoration: BoxDecoration(shape: BoxShape.circle, color: const Color(0xFF3B82F6).withValues(alpha: 0.15)))),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Advisor chips
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: _advisors.asMap().entries.map((e) {
+                        final i = e.key;
+                        final a = e.value;
+                        final isActive = i == _activeChip;
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 350),
+                          margin: EdgeInsets.only(left: [0.0, 18.0, 32.0, 10.0][i], bottom: 8),
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                          decoration: BoxDecoration(
+                            color: isActive ? Colors.white.withValues(alpha: 0.13) : Colors.white.withValues(alpha: 0.06),
+                            borderRadius: BorderRadius.circular(100),
+                            border: Border.all(color: isActive ? Colors.white.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.09)),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 24, height: 24,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(colors: [a.from, a.to]),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(child: Text(a.initials, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white))),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(a.name, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.white.withValues(alpha: 0.9))),
+                              if (isActive) ...[
+                                const SizedBox(width: 6),
+                                Container(width: 6, height: 6, decoration: const BoxDecoration(color: AppColors.success, shape: BoxShape.circle)),
+                              ],
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text('Talk to an Advisor', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
+                    const SizedBox(height: 4),
+                    Text('Connect with a financial expert who can help personalize your retirement strategy.', style: TextStyle(fontSize: 12, color: Colors.white.withValues(alpha: 0.55), height: 1.5)),
+                    const SizedBox(height: 14),
+                    Row(
+                      children: [
+                        Text('Meet an Expert', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white.withValues(alpha: 0.7))),
+                        const SizedBox(width: 4),
+                        Icon(Icons.chevron_right, color: Colors.white.withValues(alpha: 0.7), size: 16),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AdvisorChip {
+  final String name;
+  final String initials;
+  final Color from;
+  final Color to;
+  const _AdvisorChip(this.name, this.initials, this.from, this.to);
 }
