@@ -73,6 +73,127 @@ class _InvestmentStrategyPageState extends ConsumerState<InvestmentStrategyPage>
   bool _showRiskEditor = false;
   bool _useCustomPortfolio = false;
 
+  void _showFundPickerSheet(BuildContext context) {
+    final strategy = _strategies.firstWhere((s) => s.level == _riskLevel);
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.75,
+        maxChildSize: 0.92,
+        minChildSize: 0.5,
+        builder: (_, controller) => Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Column(
+            children: [
+              Container(
+                width: 40, height: 4,
+                margin: const EdgeInsets.only(top: 12, bottom: 16),
+                decoration: BoxDecoration(color: Colors.grey.shade300, borderRadius: BorderRadius.circular(2)),
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Row(
+                  children: [
+                    Icon(Icons.pie_chart_outline, color: Color(0xFF7C3AED), size: 20),
+                    SizedBox(width: 10),
+                    Text('Choose Your Funds', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Text(
+                  'Select from the ${strategy.title} strategy fund lineup. Adjust allocations to match your goals.',
+                  style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280), height: 1.4),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: ListView(
+                  controller: controller,
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  children: [
+                    ...strategy.allocations.asMap().entries.map((e) {
+                      final alloc = e.value;
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: alloc.color.withValues(alpha: 0.06),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: alloc.color.withValues(alpha: 0.2)),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(width: 12, height: 12, decoration: BoxDecoration(color: alloc.color, shape: BoxShape.circle)),
+                            const SizedBox(width: 10),
+                            Expanded(child: Text(alloc.label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF111827)))),
+                            Text('${alloc.pct.toStringAsFixed(0)}%', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: alloc.color)),
+                          ],
+                        ),
+                      );
+                    }),
+                    const SizedBox(height: 12),
+                    const Padding(
+                      padding: EdgeInsets.only(bottom: 8),
+                      child: Text('Fund Lineup', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF111827))),
+                    ),
+                    ...strategy.funds.map((f) => Container(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: const Color(0xFFE5E7EB)),
+                        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 6)],
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(f.name, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF111827))),
+                              const SizedBox(height: 2),
+                              Text(f.ticker, style: const TextStyle(fontSize: 11, color: Color(0xFF9CA3AF))),
+                            ],
+                          )),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              const Text('Expense ratio', style: TextStyle(fontSize: 10, color: Color(0xFF9CA3AF))),
+                              Text(f.expense, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF111827))),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )),
+                    const SizedBox(height: 12),
+                    GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        decoration: BoxDecoration(color: const Color(0xFF7C3AED), borderRadius: BorderRadius.circular(14)),
+                        child: const Text('Confirm Fund Selection', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Colors.white), textAlign: TextAlign.center),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -136,11 +257,20 @@ class _InvestmentStrategyPageState extends ConsumerState<InvestmentStrategyPage>
           // ── Customize Portfolio card ──
           _CustomizeCard(
             isSelected: _useCustomPortfolio,
-            onSelect: () => setState(() {
-              _mode = 'custom';
-              _useCustomPortfolio = true;
-            }),
+            onSelect: () {
+              setState(() {
+                _mode = 'custom';
+                _useCustomPortfolio = true;
+              });
+              _showFundPickerSheet(context);
+            },
           ),
+
+          // ── Fund Picker (shown when custom selected) ──
+          if (_useCustomPortfolio) ...[
+            const SizedBox(height: 12),
+            _FundPickerCard(strategy: _currentStrategy),
+          ],
           const SizedBox(height: 16),
 
           // ── Advisor Card ──
@@ -554,6 +684,62 @@ class _CheckItem extends StatelessWidget {
         const SizedBox(width: 4),
         Text(label, style: const TextStyle(fontSize: 11, color: Color(0xFF374151))),
       ],
+    );
+  }
+}
+
+// ── Fund Picker Card (inline, shown when custom portfolio selected) ────────────
+class _FundPickerCard extends StatelessWidget {
+  final _StrategyData strategy;
+  const _FundPickerCard({required this.strategy});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF7C3AED).withValues(alpha: 0.3)),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8)],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.pie_chart_outline, color: Color(0xFF7C3AED), size: 16),
+              SizedBox(width: 8),
+              Text('Your Selected Funds', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF111827))),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...strategy.allocations.map((a) => Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(
+              children: [
+                Container(width: 10, height: 10, decoration: BoxDecoration(color: a.color, shape: BoxShape.circle)),
+                const SizedBox(width: 8),
+                Expanded(child: Text(a.label, style: const TextStyle(fontSize: 12, color: Color(0xFF374151)))),
+                Text('${a.pct.toStringAsFixed(0)}%', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: a.color)),
+              ],
+            ),
+          )),
+          const SizedBox(height: 8),
+          GestureDetector(
+            onTap: () {},
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                border: Border.all(color: const Color(0xFF7C3AED).withValues(alpha: 0.5)),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Text('Edit Fund Selection', textAlign: TextAlign.center, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF7C3AED))),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

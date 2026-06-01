@@ -38,6 +38,13 @@ class _ContributionPageState extends ConsumerState<ContributionPage> {
 
   double get _totalMonthly => _myMonthly + _matchMonthly;
 
+  double get _annualAmount => _type == ContributionType.percentage
+      ? _salary * _rate / 100
+      : _rate * 12;
+
+  // "on track" % — target retirement balance $1.1M
+  double get _onTrack => (_projected30yr / 1100000).clamp(0.0, 1.0);
+
   double get _projected30yr {
     double total = 0;
     final annual = _myMonthly * 12 + _matchMonthly * 12;
@@ -47,15 +54,29 @@ class _ContributionPageState extends ConsumerState<ContributionPage> {
     return total;
   }
 
+  // Returns list of projected balances at years 0,5,10,15,20,25,30
+  List<double> get _chartData {
+    final data = <double>[];
+    double total = 0;
+    final annual = _myMonthly * 12 + _matchMonthly * 12;
+    for (int y = 0; y <= 30; y++) {
+      if (y % 5 == 0) data.add(total);
+      total = (total + annual) * 1.07;
+    }
+    return data;
+  }
+
   void _adjust(double delta) {
     final min = _type == ContributionType.percentage ? 1.0 : 50.0;
     final max = _type == ContributionType.percentage ? 25.0 : 2000.0;
     setState(() => _rate = (_rate + delta).clamp(min, max));
   }
 
-  String _fmt(double v) => v >= 1000
-      ? '\$${(v / 1000).toStringAsFixed(0)}K'
-      : '\$${v.toStringAsFixed(0)}';
+  String _fmt(double v) => v >= 1000000
+      ? '\$${(v / 1000000).toStringAsFixed(1)}M'
+      : v >= 1000
+          ? '\$${(v / 1000).toStringAsFixed(0)}K'
+          : '\$${v.toStringAsFixed(0)}';
 
   @override
   Widget build(BuildContext context) {
@@ -74,15 +95,34 @@ class _ContributionPageState extends ConsumerState<ContributionPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'How much would you like to contribute?',
+            'Set your retirement savings',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: Color(0xFF111827)),
           ),
           const SizedBox(height: 4),
           const Text(
-            'Your employer matches up to 6% of your salary.',
+            'We\'ll guide you to the right contribution for your future.',
             style: TextStyle(fontSize: 13, color: Color(0xFF6B7280)),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
+
+          // Monthly paycheck display
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8F9FF),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.primary.withValues(alpha: 0.15)),
+            ),
+            child: Column(
+              children: [
+                const Text('MONTHLY PAYCHECK', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF9CA3AF), letterSpacing: 0.5)),
+                const SizedBox(height: 4),
+                Text('\$${(_salary / 12).toStringAsFixed(0)}', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Color(0xFF111827))),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
 
           // % / Fixed toggle
           Container(
@@ -154,6 +194,35 @@ class _ContributionPageState extends ConsumerState<ContributionPage> {
               ],
             ),
           ),
+
+          // Slider (percentage mode)
+          if (_type == ContributionType.percentage) ...[
+            const SizedBox(height: 8),
+            SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                activeTrackColor: AppColors.primary,
+                inactiveTrackColor: AppColors.primary.withValues(alpha: 0.15),
+                thumbColor: AppColors.primary,
+                overlayColor: AppColors.primary.withValues(alpha: 0.12),
+                trackHeight: 4,
+              ),
+              child: Slider(
+                value: _rate.clamp(1.0, 25.0),
+                min: 1,
+                max: 25,
+                divisions: 24,
+                onChanged: (v) => setState(() => _rate = v),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('1%', style: TextStyle(fontSize: 11, color: Color(0xFF9CA3AF))),
+                Text('Annual: \$${_annualAmount.toStringAsFixed(0)}', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF374151))),
+                const Text('25%', style: TextStyle(fontSize: 11, color: Color(0xFF9CA3AF))),
+              ],
+            ),
+          ],
           const SizedBox(height: 16),
 
           // Match progress bar
@@ -232,6 +301,106 @@ class _ContributionPageState extends ConsumerState<ContributionPage> {
                         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppColors.primary),
                       ),
                     ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // ── Retirement Savings Projection Chart ─────────────────────────
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Retirement Savings Projection', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF111827))),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: AppColors.success.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Text('${(_onTrack * 100).toStringAsFixed(0)}% on track', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.success)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text('Growth over 30 years at 7% annual return', style: TextStyle(fontSize: 11, color: Colors.grey.shade500)),
+                const SizedBox(height: 16),
+                // Projected balance + monthly impact
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.06), borderRadius: BorderRadius.circular(10)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('PROJECTED AT AGE 65', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w600, color: Color(0xFF9CA3AF), letterSpacing: 0.3)),
+                            const SizedBox(height: 4),
+                            Text(_fmt(_projected30yr), style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.primary)),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('MONTHLY IMPACT', style: TextStyle(fontSize: 9, fontWeight: FontWeight.w600, color: Color(0xFF9CA3AF), letterSpacing: 0.3)),
+                          const SizedBox(height: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(color: const Color(0xFFF3F4F6), borderRadius: BorderRadius.circular(8)),
+                            child: Text('You \$${_myMonthly.toStringAsFixed(0)}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF374151))),
+                          ),
+                          const SizedBox(height: 4),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(color: AppColors.success.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(8)),
+                            child: Text('+\$${_matchMonthly.toStringAsFixed(0)} match', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.success)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                // Mini bar chart
+                _RetirementChart(data: _chartData),
+              ],
+            ),
+          ),
+
+          // Pro tip
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF5F3FF),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: const Color(0xFF7C3AED).withValues(alpha: 0.2)),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(Icons.auto_awesome, color: Color(0xFF7C3AED), size: 16),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Pro Tip: Increasing by 1% could add ~\$${(_projected30yr * 0.16 / 1000).toStringAsFixed(0)}K to your retirement savings over 30 years.',
+                    style: const TextStyle(fontSize: 12, color: Color(0xFF7C3AED), height: 1.4),
                   ),
                 ),
               ],
@@ -374,6 +543,58 @@ class _SummaryRow extends StatelessWidget {
       children: [
         Text(label, style: TextStyle(fontSize: 13, color: const Color(0xFF6B7280), fontWeight: bold ? FontWeight.w600 : FontWeight.w400)),
         Text(value, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: color)),
+      ],
+    );
+  }
+}
+
+class _RetirementChart extends StatelessWidget {
+  final List<double> data;
+  const _RetirementChart({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    final max = data.isEmpty ? 1.0 : data.reduce((a, b) => a > b ? a : b);
+    final labels = ['0yr', '5yr', '10yr', '15yr', '20yr', '25yr', '30yr'];
+    return Column(
+      children: [
+        SizedBox(
+          height: 80,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: List.generate(data.length, (i) {
+              final fraction = max > 0 ? (data[i] / max) : 0.0;
+              final isLast = i == data.length - 1;
+              return Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(right: isLast ? 0 : 4),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeOutCubic,
+                        height: (fraction * 70).clamp(4, 70),
+                        decoration: BoxDecoration(
+                          color: isLast
+                              ? AppColors.primary
+                              : AppColors.primary.withValues(alpha: 0.3 + fraction * 0.5),
+                          borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Row(
+          children: List.generate(labels.length, (i) => Expanded(
+            child: Text(labels[i], style: const TextStyle(fontSize: 9, color: Color(0xFF9CA3AF)), textAlign: TextAlign.center),
+          )),
+        ),
       ],
     );
   }

@@ -61,7 +61,7 @@ class _RetirementReadinessPageState extends ConsumerState<RetirementReadinessPag
   }
 
   String _fmtCurrency(double v) {
-    if (v >= 1000000) return '\$${(v / 1000000).toFixed(2)}M';
+    if (v >= 1000000) return '\$${(v / 1000000).toStringAsFixed(2)}M';
     if (v >= 1000) return '\$${(v / 1000).toStringAsFixed(0)}K';
     return '\$${v.toStringAsFixed(0)}';
   }

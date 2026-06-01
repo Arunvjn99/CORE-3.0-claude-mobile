@@ -66,31 +66,6 @@ class _PreEnrollmentDashboardState extends ConsumerState<PreEnrollmentDashboard>
             padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                // Employer match spotlight
-                _EmployerMatchCard(companyTheme: companyTheme),
-                const SizedBox(height: 20),
-
-                // Why enroll section
-                const _SectionHeader(title: 'Why Enroll?', subtitle: 'Key benefits of your retirement plan'),
-                const SizedBox(height: 14),
-                const _BenefitsGrid(),
-                const SizedBox(height: 24),
-
-                // Available plans
-                const _SectionHeader(title: 'Available Plans', subtitle: 'Choose the right plan for your goals'),
-                const SizedBox(height: 14),
-                _PlanCards(
-                  onTap: () => context.push(AppRoutes.enrollmentPlan),
-                ),
-                const SizedBox(height: 28),
-
-                // Final CTA
-                _FinalCTA(
-                  companyTheme: companyTheme,
-                  onStart: () => context.push(AppRoutes.enrollmentPlan),
-                ),
-                const SizedBox(height: 24),
-
                 // Learning Hub Card
                 _LearningCard(
                   onLearnMore: () => context.push(AppRoutes.enrollmentPlan),

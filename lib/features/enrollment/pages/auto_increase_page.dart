@@ -64,12 +64,12 @@ class _AutoIncreasePageState extends ConsumerState<AutoIncreasePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Boost your savings automatically',
+            'Increase your savings automatically',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: Color(0xFF111827)),
           ),
           const SizedBox(height: 4),
           const Text(
-            'Auto Increase raises your contribution rate 1% each year. See how much it adds up over time.',
+            'Small increases today can grow your retirement savings over time.',
             style: TextStyle(fontSize: 13, color: Color(0xFF6B7280), height: 1.5),
           ),
           const SizedBox(height: 24),
