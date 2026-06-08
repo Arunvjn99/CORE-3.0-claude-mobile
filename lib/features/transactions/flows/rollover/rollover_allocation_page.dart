@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/widgets/app_card.dart';
 import '../../../../../core/widgets/flow_scaffold.dart';
 
 class RolloverAllocationPage extends StatefulWidget {
@@ -34,7 +33,6 @@ class _RolloverAllocationPageState extends State<RolloverAllocationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return FlowScaffold(
       title: 'Allocation',
       currentStep: 3,
@@ -46,19 +44,25 @@ class _RolloverAllocationPageState extends State<RolloverAllocationPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Rollover Allocation',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+          const Text('Rollover Allocation',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
           const SizedBox(height: 8),
-          Text('Choose how the rolled-over funds (\$45,000) will be invested.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+          const Text('Choose how the rolled-over funds (\$45,000) will be invested.',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
           const SizedBox(height: 20),
 
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Allocation Strategy',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                const Text('Allocation Strategy',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 12),
                 _StrategyOption(
                   value: 'existing', groupValue: _strategy,
@@ -103,7 +107,7 @@ class _RolloverAllocationPageState extends State<RolloverAllocationPage> {
                   const SizedBox(width: 8),
                   Text('Total: ${_total.toStringAsFixed(0)}% / 100%',
                       style: TextStyle(
-                        fontSize: 13, fontWeight: FontWeight.w700,
+                        fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700,
                         color: _isValid ? AppColors.success : AppColors.warning,
                       )),
                   const Spacer(),
@@ -120,17 +124,24 @@ class _RolloverAllocationPageState extends State<RolloverAllocationPage> {
                           }
                         });
                       },
-                      child: const Text('Auto', style: TextStyle(fontSize: 12)),
+                      child: const Text('Auto', style: TextStyle(fontFamily: 'Inter', fontSize: 12)),
                     ),
                 ],
               ),
             ),
 
-            AppCard(
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Custom Allocation', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
+                  const Text('Custom Allocation',
+                      style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary)),
                   const SizedBox(height: 14),
                   ..._customAlloc.entries.map((e) {
                     final color = _colors[e.key] ?? AppColors.primary;
@@ -143,8 +154,10 @@ class _RolloverAllocationPageState extends State<RolloverAllocationPage> {
                             children: [
                               Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
                               const SizedBox(width: 8),
-                              Expanded(child: Text(e.key, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600))),
-                              Text('${e.value.toInt()}%', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+                              Expanded(child: Text(e.key,
+                                  style: const TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary))),
+                              Text('${e.value.toInt()}%',
+                                  style: const TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w800, color: AppColors.lightTextPrimary)),
                             ],
                           ),
                           Slider(
@@ -162,12 +175,18 @@ class _RolloverAllocationPageState extends State<RolloverAllocationPage> {
           ],
 
           if (_strategy == 'existing' || _strategy == 'target-date') ...[
-            AppCard(
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Allocation Preview',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
+                  const Text('Allocation Preview',
+                      style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary)),
                   const SizedBox(height: 12),
                   if (_strategy == 'existing') ...[
                     ('Large Cap Equity Fund', 40.0, AppColors.primary),
@@ -180,8 +199,8 @@ class _RolloverAllocationPageState extends State<RolloverAllocationPage> {
                       children: [
                         Container(width: 8, height: 8, decoration: BoxDecoration(color: f.$3, shape: BoxShape.circle)),
                         const SizedBox(width: 8),
-                        Expanded(child: Text(f.$1, style: const TextStyle(fontSize: 12))),
-                        Text('${f.$2.toInt()}%', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                        Expanded(child: Text(f.$1, style: const TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextPrimary))),
+                        Text('${f.$2.toInt()}%', style: const TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                       ],
                     ),
                   )).toList(),
@@ -190,8 +209,9 @@ class _RolloverAllocationPageState extends State<RolloverAllocationPage> {
                       children: [
                         Container(width: 8, height: 8, decoration: const BoxDecoration(color: AppColors.chartOrange, shape: BoxShape.circle)),
                         const SizedBox(width: 8),
-                        const Expanded(child: Text('Target Date 2050 Fund', style: TextStyle(fontSize: 12))),
-                        const Text('100%', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                        const Expanded(child: Text('Target Date 2050 Fund',
+                            style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextPrimary))),
+                        const Text('100%', style: TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                       ],
                     ),
                 ],
@@ -215,16 +235,15 @@ class _StrategyOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final selected = value == groupValue;
     return GestureDetector(
       onTap: () => onChanged(value),
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: selected ? AppColors.primary : scheme.outline),
-          color: selected ? AppColors.primary.withValues(alpha: 0.05) : null,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: selected ? AppColors.primary : AppColors.lightBorder, width: selected ? 1.5 : 1),
+          color: selected ? AppColors.primary.withValues(alpha: 0.05) : Colors.white,
         ),
         child: Row(
           children: [
@@ -239,8 +258,8 @@ class _StrategyOption extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                  Text(description, style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant, height: 1.3)),
+                  Text(label, style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary)),
+                  Text(description, style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.lightTextSecondary, height: 1.3)),
                 ],
               ),
             ),

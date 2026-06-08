@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../router/app_router.dart';
-import '../providers/enrollment_provider.dart';
+import 'package:go_router/go_router.dart';
 import '../models/enrollment_model.dart';
+import '../providers/enrollment_provider.dart';
+import '../router/app_router.dart';
 import '../theme/app_colors.dart';
 
 class AppShell extends ConsumerWidget {
   final Widget child;
-
   const AppShell({super.key, required this.child});
 
   int _selectedIndex(String location) {
     if (location.startsWith(AppRoutes.transactions)) return 1;
-    if (location.startsWith(AppRoutes.investments)) return 2;
-    if (location.startsWith(AppRoutes.profile)) return 3;
+    if (location.startsWith(AppRoutes.investments)) return 3;
+    if (location.startsWith(AppRoutes.profile)) return 4;
     return 0;
   }
 
@@ -24,61 +23,158 @@ class AppShell extends ConsumerWidget {
     final selectedIndex = _selectedIndex(location);
     final enrollmentStatus = ref.watch(enrollmentProvider).status;
     final isEnrolled = enrollmentStatus == EnrollmentStatus.complete;
-    final bottomPad = MediaQuery.of(context).padding.bottom;
+    final isAiSelected = location.startsWith(AppRoutes.aiAssistant);
+    final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       body: child,
       floatingActionButton: _AiFab(
-        isSelected: location.startsWith(AppRoutes.aiAssistant),
+        isSelected: isAiSelected,
         onTap: () => context.go(AppRoutes.aiAssistant),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
-        height: 64 + bottomPad,
-        padding: EdgeInsets.zero,
-        elevation: 8,
-        shadowColor: Colors.black26,
-        surfaceTintColor: Colors.white,
-        color: Colors.white,
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8,
+      bottomNavigationBar: _BottomNav(
+        selectedIndex: selectedIndex,
+        isEnrolled: isEnrolled,
+        onHome: () => context.go(
+          isEnrolled
+              ? AppRoutes.postEnrollmentDashboard
+              : AppRoutes.preEnrollmentDashboard,
+        ),
+        onTransactions: () => context.go(AppRoutes.transactions),
+        onInvest: () => context.go(AppRoutes.investments),
+        onProfile: () => context.go(AppRoutes.profile),
+        scheme: scheme,
+      ),
+    );
+  }
+}
+
+class _BottomNav extends StatelessWidget {
+  const _BottomNav({
+    required this.selectedIndex,
+    required this.isEnrolled,
+    required this.onHome,
+    required this.onTransactions,
+    required this.onInvest,
+    required this.onProfile,
+    required this.scheme,
+  });
+
+  final int selectedIndex;
+  final bool isEnrolled;
+  final VoidCallback onHome;
+  final VoidCallback onTransactions;
+  final VoidCallback onInvest;
+  final VoidCallback onProfile;
+  final ColorScheme scheme;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 20,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        top: false,
         child: SizedBox(
-          height: 64,
+          height: 60,
           child: Row(
             children: [
               _NavItem(
                 icon: Icons.home_outlined,
-                activeIcon: Icons.home,
+                activeIcon: Icons.home_rounded,
                 label: 'Home',
                 isSelected: selectedIndex == 0,
-                onTap: () => context.go(
-                  isEnrolled
-                      ? AppRoutes.postEnrollmentDashboard
-                      : AppRoutes.preEnrollmentDashboard,
-                ),
+                onTap: onHome,
+                scheme: scheme,
               ),
               _NavItem(
                 icon: Icons.swap_horiz_outlined,
-                activeIcon: Icons.swap_horiz,
+                activeIcon: Icons.swap_horiz_rounded,
                 label: 'Transactions',
                 isSelected: selectedIndex == 1,
-                onTap: () => context.go(AppRoutes.transactions),
+                onTap: onTransactions,
+                scheme: scheme,
               ),
-              // Center spacer for FAB notch
               const Expanded(child: SizedBox()),
               _NavItem(
-                icon: Icons.pie_chart_outline,
-                activeIcon: Icons.pie_chart,
-                label: 'Investments',
-                isSelected: selectedIndex == 2,
-                onTap: () => context.go(AppRoutes.investments),
+                icon: Icons.bar_chart_outlined,
+                activeIcon: Icons.bar_chart_rounded,
+                label: 'Invest',
+                isSelected: selectedIndex == 3,
+                onTap: onInvest,
+                scheme: scheme,
               ),
               _NavItem(
-                icon: Icons.person_outline,
-                activeIcon: Icons.person,
+                icon: Icons.person_outline_rounded,
+                activeIcon: Icons.person_rounded,
                 label: 'Profile',
-                isSelected: selectedIndex == 3,
-                onTap: () => context.go(AppRoutes.profile),
+                isSelected: selectedIndex == 4,
+                onTap: onProfile,
+                scheme: scheme,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NavItem extends StatelessWidget {
+  const _NavItem({
+    required this.icon,
+    required this.activeIcon,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+    required this.scheme,
+  });
+
+  final IconData icon;
+  final IconData activeIcon;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final ColorScheme scheme;
+
+  @override
+  Widget build(BuildContext context) {
+    final activeColor = scheme.primary;
+    final mutedColor = scheme.onSurfaceVariant;
+
+    return Expanded(
+      child: Semantics(
+        button: true,
+        selected: isSelected,
+        label: label,
+        child: GestureDetector(
+          onTap: onTap,
+          behavior: HitTestBehavior.opaque,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                isSelected ? activeIcon : icon,
+                size: 22,
+                color: isSelected ? activeColor : mutedColor,
+              ),
+              const SizedBox(height: 3),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w400,
+                  color: isSelected ? activeColor : mutedColor,
+                ),
               ),
             ],
           ),
@@ -89,102 +185,41 @@ class AppShell extends ConsumerWidget {
 }
 
 class _AiFab extends StatelessWidget {
+  const _AiFab({required this.isSelected, required this.onTap});
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _AiFab({required this.isSelected, required this.onTap});
-
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 60,
-        height: 60,
+        width: 56,
+        height: 56,
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xFF4F46E5), Color(0xFF7C3AED)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
           shape: BoxShape.circle,
+          color: AppColors.brandNavy,
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF4F46E5).withValues(alpha: 0.45),
+              color: primary.withValues(alpha: 0.35),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),
           ],
-          border: isSelected
-              ? Border.all(color: Colors.white, width: 3)
-              : null,
+          border: isSelected ? Border.all(color: Colors.white, width: 2.5) : null,
         ),
-        child: Column(
+        child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.psychology, color: Colors.white, size: 24),
-            const Text(
+            Icon(Icons.psychology_outlined, color: Colors.white, size: 20),
+            Text(
               'AI',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 9,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _NavItem extends StatelessWidget {
-  final IconData icon;
-  final IconData activeIcon;
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _NavItem({
-    required this.icon,
-    required this.activeIcon,
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        behavior: HitTestBehavior.opaque,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? AppColors.primary.withValues(alpha: 0.1)
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(
-                isSelected ? activeIcon : icon,
-                size: 22,
-                color: isSelected ? AppColors.primary : const Color(0xFF9CA3AF),
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                color: isSelected ? AppColors.primary : const Color(0xFF9CA3AF),
+                fontWeight: FontWeight.w800,
               ),
             ),
           ],

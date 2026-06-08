@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/widgets/app_card.dart';
 import '../../../../../core/widgets/flow_scaffold.dart';
 
 class RolloverPlanPage extends StatefulWidget {
@@ -31,7 +30,6 @@ class _RolloverPlanPageState extends State<RolloverPlanPage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return FlowScaffold(
       title: 'Plan Details',
       currentStep: 1,
@@ -43,20 +41,26 @@ class _RolloverPlanPageState extends State<RolloverPlanPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('External Plan Details',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+          const Text('External Plan Details',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
           const SizedBox(height: 8),
-          Text('Enter the details of the external retirement plan you\'d like to roll over.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+          const Text('Enter the details of the external retirement plan you\'d like to roll over.',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
           const SizedBox(height: 20),
 
           // Rollover type
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Rollover Type',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                const Text('Rollover Type',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 12),
                 _TypeOption(
                   value: 'direct', groupValue: _rolloverType,
@@ -97,7 +101,7 @@ class _RolloverPlanPageState extends State<RolloverPlanPage> {
                   Expanded(
                     child: Text(
                       'With an indirect rollover, your current plan will withhold 20% for taxes. You must deposit 100% of the original amount within 60 days to avoid taxes and penalties.',
-                      style: TextStyle(fontSize: 12, color: AppColors.warning, height: 1.4),
+                      style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.warning, height: 1.4),
                     ),
                   ),
                 ],
@@ -105,12 +109,18 @@ class _RolloverPlanPageState extends State<RolloverPlanPage> {
             ),
 
           // Plan info form
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Plan Information',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                const Text('Plan Information',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _planNameController,
@@ -161,7 +171,7 @@ class _RolloverPlanPageState extends State<RolloverPlanPage> {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.06),
+              color: AppColors.iconBgBlue,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
             ),
@@ -173,7 +183,7 @@ class _RolloverPlanPageState extends State<RolloverPlanPage> {
                 Expanded(
                   child: Text(
                     'Rollovers from traditional accounts to Roth accounts are taxable events. Rollovers between accounts of the same type (traditional to traditional, Roth to Roth) are generally tax-free.',
-                    style: TextStyle(fontSize: 12, color: AppColors.primary, height: 1.4),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.primary, height: 1.4),
                   ),
                 ),
               ],
@@ -199,16 +209,15 @@ class _TypeOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final selected = value == groupValue;
     return GestureDetector(
       onTap: () => onChanged(value),
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: selected ? color : scheme.outline),
-          color: selected ? color.withValues(alpha: 0.05) : null,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: selected ? color : AppColors.lightBorder, width: selected ? 1.5 : 1),
+          color: selected ? color.withValues(alpha: 0.05) : Colors.white,
         ),
         child: Row(
           children: [
@@ -220,20 +229,20 @@ class _TypeOption extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Container(
-              width: 32, height: 32,
+              width: 44, height: 44,
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, color: color, size: 16),
+              child: Icon(icon, color: color, size: 20),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                  Text(description, style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant, height: 1.3)),
+                  Text(label, style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary)),
+                  Text(description, style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.lightTextSecondary, height: 1.3)),
                 ],
               ),
             ),

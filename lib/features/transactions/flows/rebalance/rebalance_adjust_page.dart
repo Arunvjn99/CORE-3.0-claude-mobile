@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/widgets/app_card.dart';
 import '../../../../../core/widgets/flow_scaffold.dart';
 
 class RebalanceAdjustPage extends StatefulWidget {
@@ -32,7 +31,6 @@ class _RebalanceAdjustPageState extends State<RebalanceAdjustPage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return FlowScaffold(
       title: 'Adjust Allocation',
       currentStep: 2,
@@ -44,11 +42,11 @@ class _RebalanceAdjustPageState extends State<RebalanceAdjustPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Adjust Allocation',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+          const Text('Adjust Allocation',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
           const SizedBox(height: 8),
-          Text('Set your target allocation percentages. They must add up to 100%.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+          const Text('Set your target allocation percentages. They must add up to 100%.',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
           const SizedBox(height: 20),
 
           // Total indicator
@@ -76,7 +74,7 @@ class _RebalanceAdjustPageState extends State<RebalanceAdjustPage> {
                 Text(
                   'Total: ${_total.toStringAsFixed(0)}% / 100%',
                   style: TextStyle(
-                    fontSize: 14, fontWeight: FontWeight.w700,
+                    fontFamily: 'Inter', fontSize: 14, fontWeight: FontWeight.w700,
                     color: _isValid ? AppColors.success : _total > 100 ? AppColors.danger : AppColors.warning,
                   ),
                 ),
@@ -84,7 +82,7 @@ class _RebalanceAdjustPageState extends State<RebalanceAdjustPage> {
                 if (!_isValid)
                   TextButton(
                     onPressed: _autoBalance,
-                    child: const Text('Auto-balance', style: TextStyle(fontSize: 12)),
+                    child: const Text('Auto-balance', style: TextStyle(fontFamily: 'Inter', fontSize: 12)),
                   ),
               ],
             ),
@@ -92,12 +90,18 @@ class _RebalanceAdjustPageState extends State<RebalanceAdjustPage> {
           const SizedBox(height: 16),
 
           // Allocation sliders
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Target Allocation',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                const Text('Target Allocation',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 16),
                 ..._allocations.entries.map((e) {
                   final color = _colors[e.key] ?? AppColors.primary;
@@ -110,8 +114,10 @@ class _RebalanceAdjustPageState extends State<RebalanceAdjustPage> {
                           children: [
                             Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
                             const SizedBox(width: 8),
-                            Expanded(child: Text(e.key, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600))),
-                            Text('${e.value.toInt()}%', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+                            Expanded(child: Text(e.key,
+                                style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary))),
+                            Text('${e.value.toInt()}%',
+                                style: const TextStyle(fontFamily: 'Inter', fontSize: 16, fontWeight: FontWeight.w800, color: AppColors.lightTextPrimary)),
                           ],
                         ),
                         Slider(
@@ -129,12 +135,18 @@ class _RebalanceAdjustPageState extends State<RebalanceAdjustPage> {
           const SizedBox(height: 12),
 
           // Visual bar
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Allocation Preview',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
+                const Text('Allocation Preview',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 12),
                 if (_total > 0)
                   ClipRRect(
@@ -142,10 +154,7 @@ class _RebalanceAdjustPageState extends State<RebalanceAdjustPage> {
                     child: Row(
                       children: _allocations.entries.where((e) => e.value > 0).map((e) => Expanded(
                         flex: e.value.round(),
-                        child: Container(
-                          height: 16,
-                          color: _colors[e.key] ?? AppColors.primary,
-                        ),
+                        child: Container(height: 16, color: _colors[e.key] ?? AppColors.primary),
                       )).toList(),
                     ),
                   ),

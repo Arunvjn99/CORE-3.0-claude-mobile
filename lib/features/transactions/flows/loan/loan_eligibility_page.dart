@@ -9,7 +9,6 @@ class LoanEligibilityPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return FlowScaffold(
       title: 'Loan Eligibility',
       currentStep: 1,
@@ -19,9 +18,11 @@ class LoanEligibilityPage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Check Your Eligibility', style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700)),
+          const Text('Check Your Eligibility',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
           const SizedBox(height: 6),
-          Text('Review your loan eligibility before proceeding.', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+          const Text('Review your loan eligibility before proceeding.',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
           const SizedBox(height: 24),
 
           _EligibilityItem(icon: Icons.check_circle, text: 'Account in good standing', status: true),
@@ -48,8 +49,10 @@ class LoanEligibilityPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('You\'re Eligible!', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: AppColors.success)),
-                      Text('You qualify for a 401(k) loan. Maximum loan amount: \$71,447', style: TextStyle(fontSize: 12, color: AppColors.success)),
+                      Text('You\'re Eligible!',
+                          style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w700, fontSize: 15, color: AppColors.success)),
+                      Text('You qualify for a 401(k) loan. Maximum loan amount: \$71,447',
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.success)),
                     ],
                   ),
                 ),
@@ -71,12 +74,30 @@ class _EligibilityItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(status ? Icons.check_circle : Icons.cancel, color: status ? AppColors.success : AppColors.danger, size: 20),
-        const SizedBox(width: 12),
-        Text(text, style: const TextStyle(fontSize: 14)),
-      ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.lightBorder),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 44, height: 44,
+            decoration: BoxDecoration(
+              color: status ? AppColors.iconBgGreen : AppColors.iconBgRed,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(status ? Icons.check_circle : Icons.cancel,
+                color: status ? AppColors.success : AppColors.danger, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(child: Text(text,
+              style: const TextStyle(fontFamily: 'Inter', fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.lightTextPrimary))),
+        ],
+      ),
     );
   }
 }

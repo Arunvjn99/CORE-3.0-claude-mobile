@@ -9,16 +9,16 @@ final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
 });
 
 class ThemeNotifier extends StateNotifier<ThemeMode> {
-  ThemeNotifier() : super(ThemeMode.system) {
+  // App is light-mode only per design spec
+  ThemeNotifier() : super(ThemeMode.light) {
     _load();
   }
 
   Future<void> _load() async {
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getString(_themeKey);
-    if (saved == 'light') state = ThemeMode.light;
-    else if (saved == 'dark') state = ThemeMode.dark;
-    else state = ThemeMode.system;
+    if (saved == 'dark') state = ThemeMode.dark;
+    else state = ThemeMode.light; // default to light
   }
 
   Future<void> setTheme(ThemeMode mode) async {

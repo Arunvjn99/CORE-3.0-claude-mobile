@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/widgets/app_card.dart';
 import '../../../../../core/widgets/flow_scaffold.dart';
 
 class WithdrawalFeesPage extends StatefulWidget {
@@ -31,7 +30,6 @@ class _WithdrawalFeesPageState extends State<WithdrawalFeesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return FlowScaffold(
       title: 'Fees & Taxes',
       currentStep: 4,
@@ -42,24 +40,31 @@ class _WithdrawalFeesPageState extends State<WithdrawalFeesPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Tax Impact & Fees',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+          const Text('Tax Impact & Fees',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
           const SizedBox(height: 8),
-          Text('Review the taxes, penalties, and fees that will apply to your withdrawal.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+          const Text('Review the taxes, penalties, and fees that will apply to your withdrawal.',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
           const SizedBox(height: 20),
 
           // Breakdown card
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Withdrawal Breakdown',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                const Text('Withdrawal Breakdown',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 16),
                 _BreakdownRow(label: 'Withdrawal Amount', sublabel: 'Total from selected sources',
-                    value: '\$$_withdrawalAmount', valueStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
-                Divider(height: 24, color: scheme.outline.withValues(alpha: 0.3)),
+                    value: '\$$_withdrawalAmount',
+                    valueStyle: const TextStyle(fontFamily: 'Inter', fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
+                Divider(height: 24, color: AppColors.lightBorder),
                 _BreakdownRow(label: 'Federal Tax Withholding (${_federal.toInt()}%)',
                     sublabel: 'Mandatory minimum withholding', value: '-\$$_federalTax', isDeduction: true),
                 const SizedBox(height: 10),
@@ -73,23 +78,26 @@ class _WithdrawalFeesPageState extends State<WithdrawalFeesPage> {
                 const SizedBox(height: 10),
                 _BreakdownRow(label: 'Redemption Fee',
                     sublabel: 'Investment liquidation fee', value: '-\$$_redemptionFee', isDeduction: true),
-                Divider(height: 24, color: scheme.outline.withValues(alpha: 0.3)),
+                Divider(height: 24, color: AppColors.lightBorder),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   decoration: BoxDecoration(
                     color: AppColors.successBg,
                     borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: AppColors.success.withValues(alpha: 0.2)),
                   ),
                   child: Row(
                     children: [
                       Expanded(
                         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          const Text('Final Payout', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
-                          Text('Amount you will receive', style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                          const Text('Final Payout',
+                              style: TextStyle(fontFamily: 'Inter', fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
+                          const Text('Amount you will receive',
+                              style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.lightTextSecondary)),
                         ]),
                       ),
                       Text('\$$_finalPayout',
-                          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.success)),
+                          style: const TextStyle(fontFamily: 'Inter', fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.success)),
                     ],
                   ),
                 ),
@@ -99,28 +107,38 @@ class _WithdrawalFeesPageState extends State<WithdrawalFeesPage> {
           const SizedBox(height: 12),
 
           // Remaining balance card
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.trending_down, color: AppColors.primary, size: 20),
+                Container(
+                  width: 44, height: 44,
+                  decoration: BoxDecoration(color: AppColors.iconBgBlue, borderRadius: BorderRadius.circular(12)),
+                  child: const Icon(Icons.trending_down, color: AppColors.primary, size: 20),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text('Remaining Retirement Balance',
-                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary)),
                       const SizedBox(height: 4),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.baseline,
                         textBaseline: TextBaseline.alphabetic,
                         children: [
                           Text('\$$_remaining',
-                              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
+                              style: const TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                           const SizedBox(width: 6),
-                          Text('after withdrawal',
-                              style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant)),
+                          const Text('after withdrawal',
+                              style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextSecondary)),
                         ],
                       ),
                       const SizedBox(height: 8),
@@ -137,8 +155,9 @@ class _WithdrawalFeesPageState extends State<WithdrawalFeesPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('\$0', style: TextStyle(fontSize: 10, color: scheme.onSurfaceVariant)),
-                          Text('\$$_currentBalance (current)', style: TextStyle(fontSize: 10, color: scheme.onSurfaceVariant)),
+                          const Text('\$0', style: TextStyle(fontFamily: 'Inter', fontSize: 10, color: AppColors.lightTextSecondary)),
+                          const Text('\$$_currentBalance (current)',
+                              style: TextStyle(fontFamily: 'Inter', fontSize: 10, color: AppColors.lightTextSecondary)),
                         ],
                       ),
                     ],
@@ -150,24 +169,25 @@ class _WithdrawalFeesPageState extends State<WithdrawalFeesPage> {
           const SizedBox(height: 12),
 
           // Tax settings (collapsible)
-          AppCard(
-            noPadding: true,
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               children: [
                 InkWell(
                   onTap: () => setState(() => _taxSettingsOpen = !_taxSettingsOpen),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Row(
                       children: [
                         Container(
-                          width: 36, height: 36,
-                          decoration: BoxDecoration(
-                            color: AppColors.chartPurple.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(Icons.settings, color: AppColors.chartPurple, size: 18),
+                          width: 44, height: 44,
+                          decoration: BoxDecoration(color: AppColors.iconBgPurple, borderRadius: BorderRadius.circular(12)),
+                          child: const Icon(Icons.settings, color: AppColors.chartPurple, size: 20),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -175,23 +195,23 @@ class _WithdrawalFeesPageState extends State<WithdrawalFeesPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const Text('Tax Withholding Settings',
-                                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                              Text('Adjust federal and state withholding percentages',
-                                  style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant)),
+                                  style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary)),
+                              const Text('Adjust federal and state withholding percentages',
+                                  style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.lightTextSecondary)),
                             ],
                           ),
                         ),
                         AnimatedRotation(
                           turns: _taxSettingsOpen ? 0.5 : 0,
                           duration: const Duration(milliseconds: 200),
-                          child: Icon(Icons.keyboard_arrow_down, color: scheme.onSurfaceVariant),
+                          child: const Icon(Icons.keyboard_arrow_down, color: AppColors.lightTextSecondary),
                         ),
                       ],
                     ),
                   ),
                 ),
                 if (_taxSettingsOpen) ...[
-                  Divider(height: 1, color: scheme.outline.withValues(alpha: 0.3)),
+                  Divider(height: 1, color: AppColors.lightBorder),
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
@@ -231,15 +251,15 @@ class _WithdrawalFeesPageState extends State<WithdrawalFeesPage> {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
             ),
-            child: Row(
+            child: const Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.warning_amber, size: 16, color: AppColors.warning),
-                const SizedBox(width: 8),
-                const Expanded(
+                Icon(Icons.warning_amber, size: 16, color: AppColors.warning),
+                SizedBox(width: 8),
+                Expanded(
                   child: Text(
                     'Tax Notice: This withholding may not cover all tax liabilities. You may owe additional taxes when you file your return. The early withdrawal penalty may be waived for certain qualifying hardship circumstances. Consult with a tax professional for personalized advice.',
-                    style: TextStyle(fontSize: 12, color: AppColors.warning, height: 1.4),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.warning, height: 1.4),
                   ),
                 ),
               ],
@@ -265,22 +285,21 @@ class _BreakdownRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: const TextStyle(fontSize: 13)),
-              Text(sublabel, style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant)),
+              Text(label, style: const TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.lightTextPrimary)),
+              Text(sublabel, style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.lightTextSecondary)),
             ],
           ),
         ),
         Text(value,
             style: valueStyle ?? TextStyle(
-              fontSize: 13, fontWeight: FontWeight.w600,
-              color: isDeduction ? AppColors.danger : null,
+              fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600,
+              color: isDeduction ? AppColors.danger : AppColors.lightTextPrimary,
             )),
       ],
     );
@@ -305,7 +324,6 @@ class _TaxSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -315,12 +333,13 @@ class _TaxSlider extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                  Text(sublabel, style: TextStyle(fontSize: 10, color: scheme.onSurfaceVariant)),
+                  Text(label, style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary)),
+                  Text(sublabel, style: const TextStyle(fontFamily: 'Inter', fontSize: 10, color: AppColors.lightTextSecondary)),
                 ],
               ),
             ),
-            Text('${value.toInt()}%', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+            Text('${value.toInt()}%',
+                style: const TextStyle(fontFamily: 'Inter', fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
           ],
         ),
         Slider(
@@ -331,8 +350,8 @@ class _TaxSlider extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(minLabel, style: TextStyle(fontSize: 10, color: scheme.onSurfaceVariant)),
-            Text(maxLabel, style: TextStyle(fontSize: 10, color: scheme.onSurfaceVariant)),
+            Text(minLabel, style: const TextStyle(fontFamily: 'Inter', fontSize: 10, color: AppColors.lightTextSecondary)),
+            Text(maxLabel, style: const TextStyle(fontFamily: 'Inter', fontSize: 10, color: AppColors.lightTextSecondary)),
           ],
         ),
       ],

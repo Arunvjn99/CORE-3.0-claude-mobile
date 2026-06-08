@@ -1,307 +1,189 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/router/app_router.dart';
-import '../../../core/providers/enrollment_provider.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/widgets/flow_scaffold.dart';
 
-class AutoIncreasePage extends ConsumerStatefulWidget {
+import '../../../core/router/app_router.dart';
+import '../widgets/enrollment_scaffold.dart';
+
+/// Auto Increase page — Step 4 of 7, 56% Complete
+/// Matches Figma "auto increase" frame (2244:5098)
+class AutoIncreasePage extends StatefulWidget {
   const AutoIncreasePage({super.key});
+
   @override
-  ConsumerState<AutoIncreasePage> createState() => _AutoIncreasePageState();
+  State<AutoIncreasePage> createState() => _AutoIncreasePageState();
 }
 
-class _AutoIncreasePageState extends ConsumerState<AutoIncreasePage> {
-  static const double _fixedProjection = 124621;
-  static const double _autoProjection = 185943;
-  static const double _difference = _autoProjection - _fixedProjection;
+class _AutoIncreasePageState extends State<AutoIncreasePage> {
+  bool _enabled = true;
+  String _frequency = 'Calendar Year';
+  double _increaseAmt = 1.0;
+  double _targetRate = 15.0;
 
-  String _fmt(double v) => '\$${(v / 1000).toStringAsFixed(0)}K';
-
-  void _showSkipModal() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (_) => _SkipConfirmSheet(
-        onSkip: () {
-          Navigator.of(context).pop();
-          ref.read(enrollmentProvider.notifier).setAutoIncrease(
-            enabled: false,
-            percent: null,
-            max: null,
-          );
-          context.go(AppRoutes.enrollmentInvestment);
-        },
-        onEnable: () {
-          Navigator.of(context).pop();
-          context.go(AppRoutes.enrollmentAutoIncreaseSetup);
-        },
-        difference: _fmt(_difference),
-      ),
-    );
-  }
+  static const _frequencies = ['Calendar Year', 'Hire Date', 'Plan Year'];
+  static const _increaseOptions = [1.0, 2.0, 3.0];
 
   @override
   Widget build(BuildContext context) {
-    return FlowScaffold(
-      title: 'Auto Increase',
-      currentStep: 4,
-      totalSteps: 8,
-      primaryLabel: 'Enable Auto Increase',
-      primaryEnabled: true,
-      onPrimary: () => context.go(AppRoutes.enrollmentAutoIncreaseSetup),
-      onBack: () => context.go(AppRoutes.enrollmentSource),
-      secondaryAction: TextButton(
-        onPressed: _showSkipModal,
-        child: const Text(
-          'Skip for now',
-          style: TextStyle(fontSize: 15, color: Color(0xFF6B7280), fontWeight: FontWeight.w500),
-        ),
+    return EnrollmentScaffold(
+      stepName: 'Auto Increase',
+      stepNumber: 4,
+      totalSteps: 7,
+      bottomButton: EnrollmentButton(
+        label: 'Continue to Investment',
+        onTap: () => context.push(AppRoutes.enrollmentInvestment),
       ),
-      body: Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Increase your savings automatically',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: Color(0xFF111827)),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            'Small increases today can grow your retirement savings over time.',
-            style: TextStyle(fontSize: 13, color: Color(0xFF6B7280), height: 1.5),
+          const EnrollmentHeading(
+            title: 'Increase Your Savings Automatically',
+            subtitle: 'Small annual increases can lead to massive growth without impacting your daily lifestyle.',
           ),
           const SizedBox(height: 24),
 
-          // Impact callout
+          // Enable toggle
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.successBg,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.bolt, color: AppColors.success, size: 22),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '+${_fmt(_difference)} more over 30 years',
-                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: AppColors.successText),
-                      ),
-                      const Text(
-                        'Small annual increases compound into a massive retirement boost.',
-                        style: TextStyle(fontSize: 12, color: AppColors.successText, height: 1.4),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+            decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0xFFE2E8F0))),
+            child: Row(children: [
+              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('Enable Auto Increase', style: TextStyle(fontFamily: 'Lato', fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF0F172A))),
+                const SizedBox(height: 2),
+                const Text('Recommended for long-term growth', style: TextStyle(fontFamily: 'Lato', fontSize: 12, color: Color(0xFF64748B))),
+              ])),
+              Switch(value: _enabled, onChanged: (v) => setState(() => _enabled = v), activeColor: const Color(0xFF2563EB)),
+            ]),
           ),
-          const SizedBox(height: 20),
 
-          // Side-by-side comparison
-          Row(
-            children: [
-              Expanded(child: _CompareCard(
-                title: 'Fixed Rate',
-                subtitle: 'Stay at current %\nno changes each year',
-                projected: _fmt(_fixedProjection),
-                icon: Icons.lock_outline,
-                iconBg: const Color(0xFFF3F4F6),
-                iconColor: const Color(0xFF6B7280),
-                accentColor: const Color(0xFF6B7280),
-                ctaLabel: 'Skip for now',
-                ctaOutlined: true,
-                onCta: _showSkipModal,
-              )),
-              const SizedBox(width: 12),
-              Expanded(child: _CompareCard(
-                title: 'Auto Increase',
-                subtitle: '+1% each year\nuntil max rate',
-                projected: _fmt(_autoProjection),
-                icon: Icons.trending_up,
-                iconBg: const Color(0xFFECFDF5),
-                iconColor: AppColors.success,
-                accentColor: AppColors.success,
-                badge: 'Recommended',
-                ctaLabel: 'Enable →',
-                ctaOutlined: false,
-                onCta: () => context.go(AppRoutes.enrollmentAutoIncreaseSetup),
-              )),
-            ],
-          ),
-          const SizedBox(height: 20),
-
-          // Info row
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: AppColors.primaryLight,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Row(
-              children: [
-                Icon(Icons.info_outline, color: AppColors.primary, size: 18),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    'You can change or disable Auto Increase at any time from your account settings.',
-                    style: TextStyle(fontSize: 12, color: AppColors.primary, height: 1.4),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _CompareCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String projected;
-  final IconData icon;
-  final Color iconBg;
-  final Color iconColor;
-  final Color accentColor;
-  final String? badge;
-  final String ctaLabel;
-  final bool ctaOutlined;
-  final VoidCallback onCta;
-
-  const _CompareCard({
-    required this.title, required this.subtitle, required this.projected,
-    required this.icon, required this.iconBg, required this.iconColor,
-    required this.accentColor, this.badge, required this.ctaLabel,
-    required this.ctaOutlined, required this.onCta,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: ctaOutlined ? const Color(0xFFE5E7EB) : accentColor.withValues(alpha: 0.4), width: ctaOutlined ? 1 : 2),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4))],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (badge != null) ...[
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(color: accentColor.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(100)),
-              child: Text(badge!, style: TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: accentColor)),
-            ),
-            const SizedBox(height: 8),
-          ],
-          Container(
-            width: 40, height: 40,
-            decoration: BoxDecoration(color: iconBg, borderRadius: BorderRadius.circular(10)),
-            child: Icon(icon, color: iconColor, size: 20),
-          ),
-          const SizedBox(height: 10),
-          Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF111827))),
-          const SizedBox(height: 3),
-          Text(subtitle, style: const TextStyle(fontSize: 11, color: Color(0xFF6B7280), height: 1.4)),
-          const SizedBox(height: 12),
-          Text('30yr projection', style: TextStyle(fontSize: 9, color: accentColor, fontWeight: FontWeight.w600, letterSpacing: 0.3)),
-          Text(projected, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: accentColor)),
-          const SizedBox(height: 14),
-          GestureDetector(
-            onTap: onCta,
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              decoration: BoxDecoration(
-                color: ctaOutlined ? Colors.transparent : accentColor,
-                borderRadius: BorderRadius.circular(10),
-                border: ctaOutlined ? Border.all(color: const Color(0xFFD1D5DB)) : null,
-              ),
-              child: Text(
-                ctaLabel,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: ctaOutlined ? const Color(0xFF6B7280) : Colors.white,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SkipConfirmSheet extends StatelessWidget {
-  final VoidCallback onSkip;
-  final VoidCallback onEnable;
-  final String difference;
-
-  const _SkipConfirmSheet({required this.onSkip, required this.onEnable, required this.difference});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      padding: EdgeInsets.fromLTRB(24, 24, 24, MediaQuery.of(context).padding.bottom + 24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(width: 40, height: 4, decoration: BoxDecoration(color: const Color(0xFFE5E7EB), borderRadius: BorderRadius.circular(2))),
-          const SizedBox(height: 20),
-          Container(
-            width: 56, height: 56,
-            decoration: BoxDecoration(color: const Color(0xFFFFF7ED), borderRadius: BorderRadius.circular(16)),
-            child: const Icon(Icons.warning_amber_rounded, color: AppColors.warning, size: 28),
-          ),
           const SizedBox(height: 16),
-          const Text('Skip Auto Increase?', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Color(0xFF111827))),
-          const SizedBox(height: 8),
-          Text(
-            'You could miss out on $difference more at retirement. Auto Increase grows your savings automatically with small annual bumps.',
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 13, color: Color(0xFF6B7280), height: 1.5),
-          ),
-          const SizedBox(height: 24),
-          GestureDetector(
-            onTap: onEnable,
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(colors: [AppColors.primary, AppColors.primaryHover]),
-                borderRadius: BorderRadius.circular(14),
+
+          if (_enabled) ...[
+            // Increase Frequency
+            const Text('INCREASE FREQUENCY', style: TextStyle(fontFamily: 'Lato', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF64748B), letterSpacing: 0.8)),
+            const SizedBox(height: 10),
+            Row(children: _frequencies.map((f) {
+              final sel = _frequency == f;
+              return Expanded(child: GestureDetector(
+                onTap: () => setState(() => _frequency = f),
+                child: Container(
+                  margin: const EdgeInsets.only(right: 8),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  decoration: BoxDecoration(
+                    color: sel ? const Color(0xFFEFF6FF) : Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: sel ? const Color(0xFF2563EB) : const Color(0xFFE2E8F0), width: sel ? 2 : 1),
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(f, style: TextStyle(fontFamily: 'Lato', fontSize: 11, fontWeight: FontWeight.w600, color: sel ? const Color(0xFF2563EB) : const Color(0xFF64748B))),
+                ),
+              ));
+            }).toList()),
+
+            const SizedBox(height: 20),
+
+            // Annual Increase Amount
+            const Text('ANNUAL INCREASE AMOUNT', style: TextStyle(fontFamily: 'Lato', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF64748B), letterSpacing: 0.8)),
+            const SizedBox(height: 10),
+            Row(children: [
+              ..._increaseOptions.map((v) {
+                final sel = _increaseAmt == v;
+                return Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: GestureDetector(
+                    onTap: () => setState(() => _increaseAmt = v),
+                    child: Container(
+                      width: 56,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: sel ? const Color(0xFF2563EB) : Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: sel ? const Color(0xFF2563EB) : const Color(0xFFE2E8F0)),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text('${v.toInt()}%', style: TextStyle(fontFamily: 'Lato', fontSize: 14, fontWeight: FontWeight.w700, color: sel ? Colors.white : const Color(0xFF0F172A))),
+                    ),
+                  ),
+                );
+              }),
+              GestureDetector(
+                onTap: () => setState(() => _increaseAmt = 0),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: _increaseAmt == 0 ? const Color(0xFF2563EB) : Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: _increaseAmt == 0 ? const Color(0xFF2563EB) : const Color(0xFFE2E8F0)),
+                  ),
+                  child: Text('Custom', style: TextStyle(fontFamily: 'Lato', fontSize: 14, fontWeight: FontWeight.w700, color: _increaseAmt == 0 ? Colors.white : const Color(0xFF0F172A))),
+                ),
               ),
-              child: const Text('Enable Auto Increase', textAlign: TextAlign.center, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white)),
+            ]),
+
+            const SizedBox(height: 20),
+
+            // Stop at target rate
+            const Text('STOP AT TARGET RATE', style: TextStyle(fontFamily: 'Lato', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF64748B), letterSpacing: 0.8)),
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: const Color(0xFFE2E8F0))),
+              child: Row(children: [
+                const Expanded(child: Text('Maximum Target', style: TextStyle(fontFamily: 'Lato', fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF0F172A)))),
+                Text('${_targetRate.toInt()}%', style: const TextStyle(fontFamily: 'Lato', fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF2563EB))),
+              ]),
             ),
-          ),
-          const SizedBox(height: 12),
-          GestureDetector(
-            onTap: onSkip,
-            child: const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8),
-              child: Text('No thanks, skip for now', style: TextStyle(fontSize: 14, color: Color(0xFF9CA3AF))),
+
+            const SizedBox(height: 24),
+
+            // Bar chart — projected retirement gain
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: const Color(0xFFE2E8F0))),
+              child: Column(children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    _Bar(label: 'With Auto\nIncrease', height: 100, color: const Color(0xFF2563EB)),
+                    const SizedBox(width: 24),
+                    _Bar(label: 'Without', height: 64, color: const Color(0xFFE2E8F0)),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(color: const Color(0xFFF0FDF4), borderRadius: BorderRadius.circular(10)),
+                  child: Row(children: [
+                    const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text('POTENTIAL GAIN', style: TextStyle(fontFamily: 'Lato', fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF64748B), letterSpacing: 0.5)),
+                      SizedBox(height: 2),
+                      Text('+\$430,000', style: TextStyle(fontFamily: 'Lato', fontSize: 18, fontWeight: FontWeight.w700, color: Color(0xFF059669))),
+                    ])),
+                    const Icon(Icons.trending_up, color: Color(0xFF059669), size: 28),
+                  ]),
+                ),
+              ]),
             ),
-          ),
+
+            const SizedBox(height: 16),
+
+            CoreAiInsightCard(text: "Most participants don't notice a 1% annual increase in their take-home pay, but it can shorten your retirement timeline by 4 years."),
+          ],
+
+          const SizedBox(height: 100),
         ],
       ),
     );
   }
+}
+
+class _Bar extends StatelessWidget {
+  const _Bar({required this.label, required this.height, required this.color});
+  final String label; final double height; final Color color;
+  @override
+  Widget build(BuildContext context) => Column(mainAxisSize: MainAxisSize.min, children: [
+    Container(width: 60, height: height, decoration: BoxDecoration(color: color, borderRadius: const BorderRadius.vertical(top: Radius.circular(8)))),
+    const SizedBox(height: 6),
+    Text(label, style: const TextStyle(fontFamily: 'Lato', fontSize: 11, color: Color(0xFF64748B)), textAlign: TextAlign.center),
+  ]);
 }

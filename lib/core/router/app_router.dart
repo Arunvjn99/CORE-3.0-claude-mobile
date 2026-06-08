@@ -1,14 +1,18 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/splash/splash_screen.dart';
 import '../../features/onboarding/walkthrough_page.dart';
+import '../../features/auth/pages/login_welcome_page.dart';
 import '../../features/auth/pages/login_page.dart';
 import '../../features/auth/pages/signup_page.dart';
 import '../../features/auth/pages/forgot_password_page.dart';
 import '../../features/auth/pages/verify_otp_page.dart';
 import '../../features/dashboard/pages/pre_enrollment_dashboard.dart';
 import '../../features/dashboard/pages/post_enrollment_dashboard.dart';
+import '../../features/enrollment/pages/onboarding_intro_page.dart';
+import '../../features/enrollment/pages/onboarding_location_page.dart';
+import '../../features/enrollment/pages/onboarding_savings_page.dart';
+import '../../features/enrollment/pages/onboarding_risk_page.dart';
 import '../../features/enrollment/pages/plan_selection_page.dart';
 import '../../features/enrollment/pages/contribution_page.dart';
 import '../../features/enrollment/pages/contribution_source_page.dart';
@@ -57,6 +61,7 @@ import '../widgets/app_shell.dart';
 class AppRoutes {
   static const splash = '/';
   static const walkthrough = '/walkthrough';
+  static const loginWelcome = '/login-welcome';
   static const login = '/login';
   static const signup = '/signup';
   static const forgotPassword = '/forgot-password';
@@ -64,6 +69,11 @@ class AppRoutes {
   static const dashboard = '/dashboard';
   static const preEnrollmentDashboard = '/pre-enrollment';
   static const postEnrollmentDashboard = '/post-enrollment';
+
+  static const onboardingIntro = '/onboarding/intro';
+  static const onboardingLocation = '/onboarding/location';
+  static const onboardingSavings = '/onboarding/savings';
+  static const onboardingRisk = '/onboarding/risk';
 
   static const enrollment = '/enrollment';
   static const enrollmentPlan = '/enrollment/plan';
@@ -122,29 +132,42 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: AppRoutes.splash,
     debugLogDiagnostics: false,
     redirect: (context, state) {
-      final isAuth = ref.read(isAuthenticatedProvider);
+      final isDemo = ref.read(demoModeProvider);
+      final isAuth = isDemo || ref.read(isAuthenticatedProvider);
       final path = state.matchedLocation;
 
-      // Splash and walkthrough always handle their own routing
-      if (path == AppRoutes.splash || path == AppRoutes.walkthrough) {
+      // Demo mode: allow all routes, skip auth redirects
+      if (isDemo) return null;
+
+      // ── Always allow these regardless of auth state ──────────────────
+      if (path == AppRoutes.splash || path == AppRoutes.walkthrough ||
+          path == AppRoutes.loginWelcome) {
+        return null;
+      }
+      // Verify OTP is reachable in both states:
+      //   • unauthenticated → after signup (email confirmation)
+      //   • authenticated   → after login  (2FA code)
+      if (path.startsWith(AppRoutes.verifyOtp)) {
         return null;
       }
 
-      // Auth-only paths (exact or prefix, but NOT '/' which is splash)
-      final isAuthPage = path == AppRoutes.login ||
+      // ── Onboarding wizard + Enrollment pages are public ─────────────
+      final isEnrollment = path.startsWith('/enrollment') || path.startsWith('/onboarding');
+      if (isEnrollment) return null;
+
+      // ── Auth-only pages (login / signup / forgot-password) ───────────
+      final isAuthOnlyPage = path == AppRoutes.login ||
           path == AppRoutes.signup ||
           path == AppRoutes.forgotPassword ||
-          path.startsWith(AppRoutes.verifyOtp);
+          path == AppRoutes.loginWelcome;
 
-      final isEnrollment = path.startsWith('/enrollment');
-
-      // Not logged in → send to login (except auth pages and enrollment)
-      if (!isAuth && !isAuthPage && !isEnrollment) {
+      // Not logged in and NOT on an auth page → redirect to login
+      if (!isAuth && !isAuthOnlyPage) {
         return AppRoutes.login;
       }
 
-      // Logged in and on an auth page → go to dashboard
-      if (isAuth && isAuthPage) {
+      // Logged in and on a pure auth page (login/signup/forgot) → dashboard
+      if (isAuth && isAuthOnlyPage) {
         final enrollment = ref.read(enrollmentProvider);
         return enrollment.status == EnrollmentStatus.complete
             ? AppRoutes.postEnrollmentDashboard
@@ -159,6 +182,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: AppRoutes.walkthrough, builder: (_, __) => const WalkthroughPage()),
 
       // ── Auth ──
+      GoRoute(path: AppRoutes.loginWelcome, builder: (_, __) => const LoginWelcomePage()),
       GoRoute(path: AppRoutes.login, builder: (_, __) => const LoginPage()),
       GoRoute(path: AppRoutes.signup, builder: (_, __) => const SignupPage()),
       GoRoute(
@@ -168,8 +192,15 @@ final routerProvider = Provider<GoRouter>((ref) {
           path: AppRoutes.verifyOtp,
           builder: (_, state) {
             final email = state.uri.queryParameters['email'] ?? '';
-            return VerifyOtpPage(email: email);
+            final source = state.uri.queryParameters['source'] ?? 'login';
+            return VerifyOtpPage(email: email, source: source);
           }),
+
+      // ── Onboarding wizard (public) ──
+      GoRoute(path: AppRoutes.onboardingIntro, builder: (_, __) => const OnboardingIntroPage()),
+      GoRoute(path: AppRoutes.onboardingLocation, builder: (_, __) => const OnboardingLocationPage()),
+      GoRoute(path: AppRoutes.onboardingSavings, builder: (_, __) => const OnboardingSavingsPage()),
+      GoRoute(path: AppRoutes.onboardingRisk, builder: (_, __) => const OnboardingRiskPage()),
 
       // ── Enrollment (public) ──
       GoRoute(

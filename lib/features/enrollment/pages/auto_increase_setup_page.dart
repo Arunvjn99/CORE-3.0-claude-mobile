@@ -53,7 +53,6 @@ class _AutoIncreaseSetupPageState extends ConsumerState<AutoIncreaseSetupPage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final schedule = _buildSchedule();
     final extra = _projectedExtra();
 
@@ -75,23 +74,23 @@ class _AutoIncreaseSetupPageState extends ConsumerState<AutoIncreaseSetupPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Configure Auto Increase', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: Color(0xFF111827))),
+          const Text('Configure Auto Increase', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.lightTextPrimary)),
           const SizedBox(height: 4),
-          const Text('Set how much your contribution increases each year and the maximum cap.', style: TextStyle(fontSize: 13, color: Color(0xFF6B7280), height: 1.5)),
+          const Text('Set how much your contribution increases each year and the maximum cap.', style: TextStyle(fontSize: 13, color: AppColors.lightTextSecondary, height: 1.5)),
           const SizedBox(height: 24),
 
           // Settings card
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: scheme.surface,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10)],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Settings', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF111827))),
+                const Text('Settings', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 16),
 
                 // Annual increase
@@ -101,8 +100,8 @@ class _AutoIncreaseSetupPageState extends ConsumerState<AutoIncreaseSetupPage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Annual increase', style: TextStyle(fontSize: 13, color: Color(0xFF374151), fontWeight: FontWeight.w600)),
-                        const Text('Added to your rate each year', style: TextStyle(fontSize: 11, color: Color(0xFF9CA3AF))),
+                        const Text('Annual increase', style: TextStyle(fontSize: 13, color: AppColors.lightTextSecondary, fontWeight: FontWeight.w600)),
+                        const Text('Added to your rate each year', style: TextStyle(fontSize: 11, color: AppColors.lightTextMuted)),
                       ],
                     ),
                     Row(
@@ -125,8 +124,8 @@ class _AutoIncreaseSetupPageState extends ConsumerState<AutoIncreaseSetupPage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Maximum cap', style: TextStyle(fontSize: 13, color: Color(0xFF374151), fontWeight: FontWeight.w600)),
-                        const Text('Contribution won\'t exceed this', style: TextStyle(fontSize: 11, color: Color(0xFF9CA3AF))),
+                        const Text('Maximum cap', style: TextStyle(fontSize: 13, color: AppColors.lightTextSecondary, fontWeight: FontWeight.w600)),
+                        const Text('Contribution won\'t exceed this', style: TextStyle(fontSize: 11, color: AppColors.lightTextMuted)),
                       ],
                     ),
                     Row(
@@ -143,7 +142,7 @@ class _AutoIncreaseSetupPageState extends ConsumerState<AutoIncreaseSetupPage> {
                 const Padding(padding: EdgeInsets.symmetric(vertical: 14), child: Divider(height: 1, color: Color(0xFFF3F4F6))),
 
                 // Increment cycle
-                const Text('Increment cycle', style: TextStyle(fontSize: 13, color: Color(0xFF374151), fontWeight: FontWeight.w600)),
+                const Text('Increment cycle', style: TextStyle(fontSize: 13, color: AppColors.lightTextSecondary, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 10),
                 Row(
                   children: List.generate(_cycles.length, (i) {
@@ -162,11 +161,11 @@ class _AutoIncreaseSetupPageState extends ConsumerState<AutoIncreaseSetupPage> {
                           ),
                           child: Column(
                             children: [
-                              Icon(_cycleIcons[i], size: 18, color: sel ? AppColors.primary : const Color(0xFF9CA3AF)),
+                              Icon(_cycleIcons[i], size: 18, color: sel ? AppColors.primary : AppColors.lightTextMuted),
                               const SizedBox(height: 4),
                               Text(
                                 _cycles[i].split(' ').first,
-                                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: sel ? AppColors.primary : const Color(0xFF6B7280)),
+                                style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: sel ? AppColors.primary : AppColors.lightTextSecondary),
                               ),
                             ],
                           ),
@@ -184,7 +183,7 @@ class _AutoIncreaseSetupPageState extends ConsumerState<AutoIncreaseSetupPage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: scheme.surface,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8)],
             ),
@@ -195,16 +194,16 @@ class _AutoIncreaseSetupPageState extends ConsumerState<AutoIncreaseSetupPage> {
                   children: [
                     Icon(Icons.calendar_month_outlined, size: 16, color: AppColors.primary),
                     SizedBox(width: 6),
-                    Text('Increase Schedule', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF111827))),
+                    Text('Increase Schedule', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                   ],
                 ),
                 const SizedBox(height: 12),
                 Row(
                   children: const [
-                    Expanded(child: Text('Period', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF9CA3AF)))),
+                    Expanded(child: Text('Period', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.lightTextMuted))),
                     SizedBox(width: 12),
-                    SizedBox(width: 70, child: Text('Rate', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF9CA3AF)), textAlign: TextAlign.center)),
-                    SizedBox(width: 70, child: Text('After', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF9CA3AF)), textAlign: TextAlign.center)),
+                    SizedBox(width: 70, child: Text('Rate', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.lightTextMuted), textAlign: TextAlign.center)),
+                    SizedBox(width: 70, child: Text('After', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.lightTextMuted), textAlign: TextAlign.center)),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -212,7 +211,7 @@ class _AutoIncreaseSetupPageState extends ConsumerState<AutoIncreaseSetupPage> {
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Row(
                     children: [
-                      Expanded(child: Text(r.year, style: const TextStyle(fontSize: 12, color: Color(0xFF374151)))),
+                      Expanded(child: Text(r.year, style: const TextStyle(fontSize: 12, color: AppColors.lightTextSecondary))),
                       const SizedBox(width: 12),
                       SizedBox(width: 70, child: Text('${r.rate.toStringAsFixed(1)}%', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600), textAlign: TextAlign.center)),
                       SizedBox(width: 70, child: Text('${r.next.toStringAsFixed(1)}%', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.success), textAlign: TextAlign.center)),
@@ -222,7 +221,7 @@ class _AutoIncreaseSetupPageState extends ConsumerState<AutoIncreaseSetupPage> {
                 if (schedule.isNotEmpty && schedule.last.next >= _maxRate)
                   Padding(
                     padding: const EdgeInsets.only(top: 4),
-                    child: Text('Max rate of ${_maxRate.toStringAsFixed(0)}% reached', style: const TextStyle(fontSize: 11, color: Color(0xFF9CA3AF), fontStyle: FontStyle.italic)),
+                    child: Text('Max rate of ${_maxRate.toStringAsFixed(0)}% reached', style: const TextStyle(fontSize: 11, color: AppColors.lightTextMuted, fontStyle: FontStyle.italic)),
                   ),
               ],
             ),
@@ -233,11 +232,9 @@ class _AutoIncreaseSetupPageState extends ConsumerState<AutoIncreaseSetupPage> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppColors.success.withValues(alpha: 0.08), AppColors.success.withValues(alpha: 0.02)],
-              ),
+              color: AppColors.successBg,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.success.withValues(alpha: 0.2)),
+              border: Border.all(color: AppColors.success.withValues(alpha: 0.25)),
             ),
             child: Row(
               children: [

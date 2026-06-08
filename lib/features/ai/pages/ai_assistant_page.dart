@@ -122,168 +122,189 @@ class _AiAssistantPageState extends State<AiAssistantPage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Scaffold(
-      backgroundColor: scheme.surfaceContainerLowest,
-      appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF4F46E5), Color(0xFF7C3AED)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          surfaceTintColor: Colors.transparent,
+          title: Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryLight,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.psychology, color: AppColors.chartPurple, size: 20),
+              ),
+              const SizedBox(width: 10),
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'CORE AI',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.lightTextPrimary,
+                    ),
+                  ),
+                  Text(
+                    'Retirement intelligence',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: AppColors.lightTextSecondary,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded, color: AppColors.lightTextSecondary),
+              onPressed: () => setState(() {
+                _messages.clear();
+                _messages.add(_Message(
+                  text: "Hello! I'm your AI Retirement Assistant. How can I help you today?",
+                  isUser: false,
+                  time: DateTime.now(),
+                  suggestions: [
+                    'How much should I contribute?',
+                    'Explain Traditional vs Roth',
+                    'Am I on track for retirement?',
+                    'How do loans work?',
+                  ],
+                ));
+              }),
+              tooltip: 'New conversation',
             ),
+          ],
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(1),
+            child: Container(height: 1, color: AppColors.lightBorder),
           ),
         ),
-        foregroundColor: Colors.white,
-        title: Row(
+        body: Column(
           children: [
-            Container(
-              width: 34, height: 34,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
+            // Chat messages
+            Expanded(
+              child: ListView.builder(
+                controller: _scrollController,
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                itemCount: _messages.length + (_isTyping ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (_isTyping && index == _messages.length) {
+                    return const _TypingBubble();
+                  }
+                  return _MessageBubble(
+                    message: _messages[index],
+                    onSuggestionTap: _sendMessage,
+                  );
+                },
               ),
-              child: const Icon(Icons.psychology, color: Colors.white, size: 18),
             ),
-            const SizedBox(width: 10),
-            const Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('CORE AI', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Colors.white)),
-                Text('Retirement intelligence', style: TextStyle(fontSize: 10, color: Colors.white70, fontWeight: FontWeight.w400)),
-              ],
+
+            // Quick suggestions row (only at start)
+            if (!_isTyping && _messages.length == 1)
+              Container(
+                height: 38,
+                margin: const EdgeInsets.only(bottom: 8),
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  children: [
+                    'Retirement readiness',
+                    'Investment strategy',
+                    'Loan eligibility',
+                    'Tax strategies',
+                  ].map((s) => Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: GestureDetector(
+                      onTap: () => _sendMessage(s),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: AppColors.lightShell,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: AppColors.lightBorder),
+                        ),
+                        child: Text(
+                          s,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.lightTextSecondary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )).toList(),
+                ),
+              ),
+
+            // Input bar
+            Container(
+              padding: EdgeInsets.fromLTRB(16, 10, 16, MediaQuery.of(context).viewInsets.bottom + 16),
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                border: Border(top: BorderSide(color: AppColors.lightBorder)),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.lightShell,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: AppColors.lightBorder),
+                      ),
+                      child: TextField(
+                        controller: _controller,
+                        focusNode: _focusNode,
+                        decoration: const InputDecoration(
+                          hintText: 'Ask about your retirement…',
+                          hintStyle: TextStyle(fontSize: 14, color: AppColors.lightTextMuted),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                        ),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: AppColors.lightTextPrimary,
+                        ),
+                        maxLines: 4,
+                        minLines: 1,
+                        textCapitalization: TextCapitalization.sentences,
+                        onSubmitted: _sendMessage,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  GestureDetector(
+                    onTap: () => _sendMessage(_controller.text),
+                    child: Container(
+                      width: 44,
+                      height: 44,
+                      decoration: const BoxDecoration(
+                        color: AppColors.darkButton,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.send_rounded, color: Colors.white, size: 18),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded),
-            onPressed: () => setState(() {
-              _messages.clear();
-              _messages.add(_Message(
-                text: "Hello! I'm your AI Retirement Assistant. How can I help you today?",
-                isUser: false,
-                time: DateTime.now(),
-                suggestions: [
-                  'How much should I contribute?',
-                  'Explain Traditional vs Roth',
-                  'Am I on track for retirement?',
-                  'How do loans work?',
-                ],
-              ));
-            }),
-            tooltip: 'New conversation',
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          // Chat messages
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-              itemCount: _messages.length + (_isTyping ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (_isTyping && index == _messages.length) {
-                  return const _TypingBubble();
-                }
-                return _MessageBubble(
-                  message: _messages[index],
-                  onSuggestionTap: _sendMessage,
-                );
-              },
-            ),
-          ),
-
-          // Quick suggestions row
-          if (!_isTyping && _messages.length == 1)
-            Container(
-              height: 36,
-              margin: const EdgeInsets.only(bottom: 8),
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: [
-                  'Retirement readiness',
-                  'Investment strategy',
-                  'Loan eligibility',
-                  'Tax strategies',
-                ].map((s) => Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: GestureDetector(
-                    onTap: () => _sendMessage(s),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
-                      ),
-                      child: Text(s, style: const TextStyle(fontSize: 12, color: AppColors.primary, fontWeight: FontWeight.w500)),
-                    ),
-                  ),
-                )).toList(),
-              ),
-            ),
-
-          // Input bar
-          Container(
-            padding: EdgeInsets.fromLTRB(16, 8, 16, MediaQuery.of(context).viewInsets.bottom + 16),
-            decoration: BoxDecoration(
-              color: scheme.surfaceContainerLow,
-              border: Border(top: BorderSide(color: scheme.outline.withValues(alpha: 0.2))),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: scheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: scheme.outline.withValues(alpha: 0.3)),
-                    ),
-                    child: TextField(
-                      controller: _controller,
-                      focusNode: _focusNode,
-                      decoration: InputDecoration(
-                        hintText: 'Ask about your retirement…',
-                        hintStyle: TextStyle(fontSize: 14, color: scheme.onSurfaceVariant),
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                      ),
-                      style: const TextStyle(fontSize: 14),
-                      maxLines: 4,
-                      minLines: 1,
-                      textCapitalization: TextCapitalization.sentences,
-                      onSubmitted: _sendMessage,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: () => _sendMessage(_controller.text),
-                  child: Container(
-                    width: 44, height: 44,
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [AppColors.primary, AppColors.chartPurple],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.send_rounded, color: Colors.white, size: 18),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -306,7 +327,6 @@ class _MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final isUser = message.isUser;
 
     return Padding(
@@ -318,23 +338,27 @@ class _MessageBubble extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  width: 24, height: 24,
+                  width: 24,
+                  height: 24,
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [AppColors.primary, AppColors.chartPurple],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+                    color: AppColors.primaryLight,
                     borderRadius: BorderRadius.circular(6),
                   ),
-                  child: const Icon(Icons.auto_awesome, color: Colors.white, size: 12),
+                  child: const Icon(Icons.auto_awesome, color: AppColors.chartPurple, size: 13),
                 ),
                 const SizedBox(width: 6),
-                Text('AI Assistant', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: scheme.onSurfaceVariant)),
+                const Text(
+                  'AI Assistant',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.lightTextSecondary,
+                  ),
+                ),
                 const SizedBox(width: 6),
                 Text(
                   _formatTime(message.time),
-                  style: TextStyle(fontSize: 10, color: scheme.onSurfaceVariant),
+                  style: const TextStyle(fontSize: 10, color: AppColors.lightTextMuted),
                 ),
               ],
             ),
@@ -345,19 +369,22 @@ class _MessageBubble extends StatelessWidget {
             mainAxisAlignment: isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              if (isUser) const SizedBox(width: 48),
+              if (isUser) const SizedBox(width: 60),
               Flexible(
                 child: GestureDetector(
                   onLongPress: () {
                     Clipboard.setData(ClipboardData(text: message.text));
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Copied to clipboard'), duration: Duration(seconds: 1)),
+                      const SnackBar(
+                        content: Text('Copied to clipboard'),
+                        duration: Duration(seconds: 1),
+                      ),
                     );
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
                     decoration: BoxDecoration(
-                      color: isUser ? AppColors.primary : scheme.surfaceContainer,
+                      color: isUser ? AppColors.primary : const Color(0xFFF3F4F6),
                       borderRadius: BorderRadius.only(
                         topLeft: const Radius.circular(16),
                         topRight: const Radius.circular(16),
@@ -369,33 +396,44 @@ class _MessageBubble extends StatelessWidget {
                   ),
                 ),
               ),
-              if (!isUser) const SizedBox(width: 48),
+              if (!isUser) const SizedBox(width: 60),
             ],
           ),
 
           if (isUser) ...[
-            const SizedBox(height: 2),
+            const SizedBox(height: 3),
             Padding(
               padding: const EdgeInsets.only(right: 4),
-              child: Text(_formatTime(message.time), style: TextStyle(fontSize: 10, color: scheme.onSurfaceVariant)),
+              child: Text(
+                _formatTime(message.time),
+                style: const TextStyle(fontSize: 10, color: AppColors.lightTextMuted),
+              ),
             ),
           ],
 
-          // Suggestions chips
+          // Suggestion chips
           if (!isUser && message.suggestions != null) ...[
             const SizedBox(height: 10),
             Wrap(
-              spacing: 8, runSpacing: 8,
+              spacing: 8,
+              runSpacing: 8,
               children: message.suggestions!.map((s) => GestureDetector(
                 onTap: () => onSuggestionTap(s),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.08),
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.primary.withValues(alpha: 0.25)),
+                    border: Border.all(color: AppColors.lightBorder),
                   ),
-                  child: Text(s, style: const TextStyle(fontSize: 12, color: AppColors.primary, fontWeight: FontWeight.w500)),
+                  child: Text(
+                    s,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.lightTextSecondary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
               )).toList(),
             ),
@@ -421,8 +459,7 @@ class _RichText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final baseColor = isUser ? Colors.white : scheme.onSurface;
+    final baseColor = isUser ? Colors.white : AppColors.lightTextPrimary;
 
     // Simple markdown-like bold parsing (**text**)
     final spans = <InlineSpan>[];
@@ -469,16 +506,15 @@ class _TypingBubbleState extends State<_TypingBubble> with SingleTickerProviderS
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: scheme.surfaceContainer,
-              borderRadius: const BorderRadius.only(
+            decoration: const BoxDecoration(
+              color: Color(0xFFF3F4F6),
+              borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
                 bottomRight: Radius.circular(16),
@@ -496,9 +532,10 @@ class _TypingBubbleState extends State<_TypingBubble> with SingleTickerProviderS
                     final scale = v < 0.5 ? 0.6 + v * 0.8 : 1.0 - (v - 0.5) * 0.8;
                     return Container(
                       margin: EdgeInsets.only(right: i < 2 ? 4 : 0),
-                      width: 7, height: 7,
+                      width: 7,
+                      height: 7,
                       decoration: BoxDecoration(
-                        color: scheme.onSurfaceVariant.withValues(alpha: 0.5 + scale * 0.5),
+                        color: AppColors.lightTextMuted.withValues(alpha: 0.5 + scale * 0.5),
                         shape: BoxShape.circle,
                       ),
                     );

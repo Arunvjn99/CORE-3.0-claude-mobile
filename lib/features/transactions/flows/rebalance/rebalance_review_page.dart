@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/widgets/app_card.dart';
 import '../../../../../core/widgets/flow_scaffold.dart';
 
 class RebalanceReviewPage extends StatefulWidget {
@@ -29,10 +28,9 @@ class _RebalanceReviewPageState extends State<RebalanceReviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     if (_submitted) {
       return Scaffold(
+        backgroundColor: Colors.white,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(32),
@@ -41,19 +39,22 @@ class _RebalanceReviewPageState extends State<RebalanceReviewPage> {
               children: [
                 Container(
                   width: 64, height: 64,
-                  decoration: BoxDecoration(color: AppColors.successBg, shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.success.withValues(alpha: 0.3))),
+                  decoration: BoxDecoration(
+                    color: AppColors.successBg,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
+                  ),
                   child: const Icon(Icons.check_circle_outline, color: AppColors.success, size: 32),
                 ),
                 const SizedBox(height: 20),
-                Text('Rebalance Submitted',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+                const Text('Rebalance Submitted',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 8),
-                Text('Your rebalance request has been submitted and trades will execute at the next market close.',
+                const Text('Your rebalance request has been submitted and trades will execute at the next market close.',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
                 const SizedBox(height: 16),
-                Text('Redirecting...', style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant)),
+                const Text('Redirecting...', style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextSecondary)),
               ],
             ),
           ),
@@ -73,22 +74,28 @@ class _RebalanceReviewPageState extends State<RebalanceReviewPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Review & Confirm',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+          const Text('Review & Confirm',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
           const SizedBox(height: 8),
-          Text('Review your rebalancing order before confirming.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+          const Text('Review your rebalancing order before confirming.',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
           const SizedBox(height: 20),
 
           // Order details
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: [
-                  const Icon(Icons.tune, color: AppColors.primary, size: 16),
-                  const SizedBox(width: 6),
-                  Text('Rebalance Order', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                const Row(children: [
+                  Icon(Icons.tune, color: AppColors.primary, size: 16),
+                  SizedBox(width: 6),
+                  Text('Rebalance Order', style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 ]),
                 const SizedBox(height: 12),
                 _Row(label: 'Rebalance Type', value: 'Manual (Custom Target)'),
@@ -106,11 +113,18 @@ class _RebalanceReviewPageState extends State<RebalanceReviewPage> {
           const SizedBox(height: 12),
 
           // Allocation change
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('New Target Allocation', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                const Text('New Target Allocation',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 12),
                 ...[
                   ('Large Cap Equity Fund', 35.0, AppColors.primary),
@@ -123,8 +137,8 @@ class _RebalanceReviewPageState extends State<RebalanceReviewPage> {
                     children: [
                       Container(width: 8, height: 8, decoration: BoxDecoration(color: f.$3, shape: BoxShape.circle)),
                       const SizedBox(width: 8),
-                      Expanded(child: Text(f.$1, style: const TextStyle(fontSize: 12))),
-                      Text('${f.$2.toInt()}%', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                      Expanded(child: Text(f.$1, style: const TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextPrimary))),
+                      Text('${f.$2.toInt()}%', style: const TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                     ],
                   ),
                 )).toList(),
@@ -133,7 +147,13 @@ class _RebalanceReviewPageState extends State<RebalanceReviewPage> {
           ),
           const SizedBox(height: 12),
 
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -143,7 +163,8 @@ class _RebalanceReviewPageState extends State<RebalanceReviewPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Rebalance Agreement', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
+                      const Text('Rebalance Agreement',
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                       const SizedBox(height: 8),
                       GestureDetector(
                         onTap: () => setState(() => _agreed = !_agreed),
@@ -158,10 +179,10 @@ class _RebalanceReviewPageState extends State<RebalanceReviewPage> {
                               visualDensity: VisualDensity.compact,
                             ),
                             const SizedBox(width: 8),
-                            Expanded(
+                            const Expanded(
                               child: Text(
                                 'I authorize this portfolio rebalance. I understand that trades will execute at the next market close and final allocation percentages may vary slightly due to market movements.',
-                                style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant, height: 1.4),
+                                style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextSecondary, height: 1.4),
                               ),
                             ),
                           ],
@@ -186,11 +207,10 @@ class _Row extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Row(
       children: [
-        Expanded(child: Text(label, style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant))),
-        Text(value, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+        Expanded(child: Text(label, style: const TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextSecondary))),
+        Text(value, style: const TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
       ],
     );
   }

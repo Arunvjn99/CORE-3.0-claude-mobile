@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/widgets/app_card.dart';
 import '../../../../../core/widgets/flow_scaffold.dart';
 
 class TransferAmountPage extends StatefulWidget {
@@ -21,7 +20,6 @@ class _TransferAmountPageState extends State<TransferAmountPage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return FlowScaffold(
       title: 'Transfer Amount',
       currentStep: 4,
@@ -32,45 +30,53 @@ class _TransferAmountPageState extends State<TransferAmountPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Set Transfer Amount',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+          const Text('Set Transfer Amount',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
           const SizedBox(height: 8),
-          Text('Specify how much you\'d like to transfer from your selected funds.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+          const Text('Specify how much you\'d like to transfer from your selected funds.',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
           const SizedBox(height: 20),
 
-          // Summary
+          // Amount display
           Container(
             width: double.infinity,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.06),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.lightBorder),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
             ),
             child: Column(
               children: [
-                Text('Transfer Amount', style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant)),
+                const Text('Transfer Amount',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextSecondary)),
                 const SizedBox(height: 4),
                 Text(
                   '\$${_transferAmount.toInt().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
-                  style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w900, color: AppColors.primary),
+                  style: const TextStyle(fontFamily: 'Inter', fontSize: 36, fontWeight: FontWeight.w900, color: AppColors.primary),
                 ),
-                Text(
+                const Text(
                   'from Large Cap Equity Fund (LCEF)',
-                  style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant),
+                  style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.lightTextSecondary),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 20),
 
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Amount Type',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                const Text('Amount Type',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 14),
                 _AmountOption(
                   value: 'full', groupValue: _amountType,
@@ -93,13 +99,16 @@ class _TransferAmountPageState extends State<TransferAmountPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Amount', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                            const Text('Amount',
+                                style: TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary)),
                             const SizedBox(height: 4),
-                            Text('\$${_partialAmount.toInt()}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                            Text('\$${_partialAmount.toInt()}',
+                                style: const TextStyle(fontFamily: 'Inter', fontSize: 28, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                           ],
                         ),
                       ),
-                      Text('of \$$_sourceBalance available', style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant)),
+                      Text('of \$$_sourceBalance available',
+                          style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.lightTextSecondary)),
                     ],
                   ),
                   Slider(
@@ -113,8 +122,8 @@ class _TransferAmountPageState extends State<TransferAmountPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('\$100 min', style: TextStyle(fontSize: 10, color: scheme.onSurfaceVariant)),
-                      Text('\$$_sourceBalance max', style: TextStyle(fontSize: 10, color: scheme.onSurfaceVariant)),
+                      const Text('\$100 min', style: TextStyle(fontFamily: 'Inter', fontSize: 10, color: AppColors.lightTextSecondary)),
+                      const Text('\$$_sourceBalance max', style: TextStyle(fontFamily: 'Inter', fontSize: 10, color: AppColors.lightTextSecondary)),
                     ],
                   ),
                 ],
@@ -126,19 +135,19 @@ class _TransferAmountPageState extends State<TransferAmountPage> {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.06),
+              color: AppColors.iconBgBlue,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
             ),
-            child: Row(
+            child: const Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.access_time, size: 16, color: AppColors.primary),
-                const SizedBox(width: 8),
-                const Expanded(
+                Icon(Icons.access_time, size: 16, color: AppColors.primary),
+                SizedBox(width: 8),
+                Expanded(
                   child: Text(
                     'Transfers execute at the next market close (typically 4:00 PM ET). Prices are based on end-of-day NAV.',
-                    style: TextStyle(fontSize: 12, color: AppColors.primary, height: 1.4),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.primary, height: 1.4),
                   ),
                 ),
               ],
@@ -161,16 +170,15 @@ class _AmountOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final selected = value == groupValue;
     return GestureDetector(
       onTap: () => onChanged(value),
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: selected ? AppColors.primary : scheme.outline),
-          color: selected ? AppColors.primary.withValues(alpha: 0.05) : null,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: selected ? AppColors.primary : AppColors.lightBorder, width: selected ? 1.5 : 1),
+          color: selected ? AppColors.primary.withValues(alpha: 0.05) : Colors.white,
         ),
         child: Row(
           children: [
@@ -185,8 +193,8 @@ class _AmountOption extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                  Text(description, style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant)),
+                  Text(label, style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary)),
+                  Text(description, style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.lightTextSecondary)),
                 ],
               ),
             ),

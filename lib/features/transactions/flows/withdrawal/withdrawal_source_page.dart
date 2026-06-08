@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/widgets/app_card.dart';
 import '../../../../../core/widgets/flow_scaffold.dart';
 
 class WithdrawalSourcePage extends StatefulWidget {
@@ -24,7 +23,6 @@ class _WithdrawalSourcePageState extends State<WithdrawalSourcePage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return FlowScaffold(
       title: 'Source of Funds',
       currentStep: 3,
@@ -36,11 +34,11 @@ class _WithdrawalSourcePageState extends State<WithdrawalSourcePage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Select Withdrawal Source',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+          const Text('Select Withdrawal Source',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
           const SizedBox(height: 8),
-          Text('Choose where your funds come from. Different sources have different tax implications.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+          const Text('Choose where your funds come from. Different sources have different tax implications.',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
           const SizedBox(height: 20),
 
           // Total summary
@@ -48,31 +46,38 @@ class _WithdrawalSourcePageState extends State<WithdrawalSourcePage> {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 20),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.06),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.lightBorder),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
             ),
             child: Column(
               children: [
-                Text('Total Withdrawal Amount',
-                    style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant)),
+                const Text('Total Withdrawal Amount',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextSecondary)),
                 const SizedBox(height: 4),
                 Text('\$${_total.toInt().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
-                    style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w800, color: AppColors.primary)),
+                    style: const TextStyle(fontFamily: 'Inter', fontSize: 32, fontWeight: FontWeight.w800, color: AppColors.primary)),
                 Text(_grossNet == 'gross' ? 'Gross amount' : 'Net amount',
-                    style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant)),
+                    style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.lightTextSecondary)),
               ],
             ),
           ),
           const SizedBox(height: 16),
 
           // Source sliders
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Contribution Sources',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                const Text('Contribution Sources',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 20),
                 _SourceSlider(
                   label: 'Pre-Tax Contributions',
@@ -115,55 +120,59 @@ class _WithdrawalSourcePageState extends State<WithdrawalSourcePage> {
           const SizedBox(height: 12),
 
           // Advanced settings (collapsible)
-          AppCard(
-            noPadding: true,
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               children: [
                 InkWell(
                   onTap: () => setState(() => _advancedOpen = !_advancedOpen),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(16),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Row(
                       children: [
                         Container(
-                          width: 36, height: 36,
+                          width: 44, height: 44,
                           decoration: BoxDecoration(
-                            color: AppColors.chartPurple.withValues(alpha: 0.12),
-                            borderRadius: BorderRadius.circular(8),
+                            color: AppColors.iconBgPurple,
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(Icons.tune, color: AppColors.chartPurple, size: 18),
+                          child: const Icon(Icons.tune, color: AppColors.chartPurple, size: 20),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Advanced Settings',
-                                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                              Text('Gross vs Net election and other options',
-                                  style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant)),
+                              const Text('Advanced Settings',
+                                  style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary)),
+                              const Text('Gross vs Net election and other options',
+                                  style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.lightTextSecondary)),
                             ],
                           ),
                         ),
                         AnimatedRotation(
                           turns: _advancedOpen ? 0.5 : 0,
                           duration: const Duration(milliseconds: 200),
-                          child: Icon(Icons.keyboard_arrow_down, color: scheme.onSurfaceVariant),
+                          child: const Icon(Icons.keyboard_arrow_down, color: AppColors.lightTextSecondary),
                         ),
                       ],
                     ),
                   ),
                 ),
                 if (_advancedOpen) ...[
-                  Divider(height: 1, color: scheme.outline.withValues(alpha: 0.3)),
+                  Divider(height: 1, color: AppColors.lightBorder),
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Gross vs Net Election',
-                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                        const Text('Gross vs Net Election',
+                            style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary)),
                         const SizedBox(height: 12),
                         _RadioOption(
                           value: 'gross', groupValue: _grossNet,
@@ -183,7 +192,7 @@ class _WithdrawalSourcePageState extends State<WithdrawalSourcePage> {
                           Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.06),
+                              color: AppColors.iconBgBlue,
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
                             ),
@@ -195,7 +204,7 @@ class _WithdrawalSourcePageState extends State<WithdrawalSourcePage> {
                                 Expanded(
                                   child: Text(
                                     'Estimated gross: \$${(_total / 0.85).round()} to deliver \$${_total.toInt()} net after taxes and fees.',
-                                    style: const TextStyle(fontSize: 11, color: AppColors.primary, height: 1.4),
+                                    style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.primary, height: 1.4),
                                   ),
                                 ),
                               ],
@@ -230,7 +239,6 @@ class _SourceSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -240,16 +248,18 @@ class _SourceSlider extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                  Text(sublabel, style: TextStyle(fontSize: 10, color: scheme.onSurfaceVariant)),
+                  Text(label, style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary)),
+                  Text(sublabel, style: const TextStyle(fontFamily: 'Inter', fontSize: 10, color: AppColors.lightTextSecondary)),
                 ],
               ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text('\$${value.toInt()}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-                Text('of \$${max.toInt()} available', style: TextStyle(fontSize: 10, color: scheme.onSurfaceVariant)),
+                Text('\$${value.toInt()}',
+                    style: const TextStyle(fontFamily: 'Inter', fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
+                Text('of \$${max.toInt()} available',
+                    style: const TextStyle(fontFamily: 'Inter', fontSize: 10, color: AppColors.lightTextSecondary)),
               ],
             ),
           ],
@@ -263,7 +273,7 @@ class _SourceSlider extends StatelessWidget {
           children: [
             const Icon(Icons.info_outline, size: 12, color: AppColors.primary),
             const SizedBox(width: 4),
-            Text(taxNote, style: TextStyle(fontSize: 10, color: scheme.onSurfaceVariant)),
+            Text(taxNote, style: const TextStyle(fontFamily: 'Inter', fontSize: 10, color: AppColors.lightTextSecondary)),
           ],
         ),
       ],
@@ -285,7 +295,6 @@ class _RadioOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final selected = value == groupValue;
     return GestureDetector(
       onTap: () => onChanged(value),
@@ -293,8 +302,8 @@ class _RadioOption extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: selected ? AppColors.primary : scheme.outline),
-          color: selected ? AppColors.primary.withValues(alpha: 0.05) : null,
+          border: Border.all(color: selected ? AppColors.primary : AppColors.lightBorder, width: selected ? 1.5 : 1),
+          color: selected ? AppColors.primary.withValues(alpha: 0.05) : Colors.white,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -310,9 +319,9 @@ class _RadioOption extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                  Text(label, style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary)),
                   const SizedBox(height: 2),
-                  Text(description, style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant, height: 1.4)),
+                  Text(description, style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.lightTextSecondary, height: 1.4)),
                 ],
               ),
             ),

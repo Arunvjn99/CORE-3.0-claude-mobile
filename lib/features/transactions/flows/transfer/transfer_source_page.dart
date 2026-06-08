@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/widgets/app_card.dart';
 import '../../../../../core/widgets/flow_scaffold.dart';
 
 class TransferSourcePage extends StatefulWidget {
@@ -26,7 +25,6 @@ class _TransferSourcePageState extends State<TransferSourcePage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return FlowScaffold(
       title: 'Source Funds',
       currentStep: 2,
@@ -38,33 +36,41 @@ class _TransferSourcePageState extends State<TransferSourcePage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Select Source Funds',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+          const Text('Select Source Funds',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
           const SizedBox(height: 8),
-          Text('Choose which investment funds you\'d like to transfer money from.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+          const Text('Choose which investment funds you\'d like to transfer money from.',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
           const SizedBox(height: 20),
 
           // Summary
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Row(
               children: [
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('SELECTED FOR TRANSFER', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: scheme.onSurfaceVariant, letterSpacing: 0.5)),
+                      const Text('SELECTED FOR TRANSFER',
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.lightTextSecondary, letterSpacing: 0.5)),
                       Text('${_selected.length} fund${_selected.length == 1 ? '' : 's'}',
-                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+                          style: const TextStyle(fontFamily: 'Inter', fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.lightTextPrimary)),
                     ],
                   ),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Text('AVAILABLE BALANCE', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: scheme.onSurfaceVariant, letterSpacing: 0.5)),
+                    const Text('AVAILABLE BALANCE',
+                        style: TextStyle(fontFamily: 'Inter', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.lightTextSecondary, letterSpacing: 0.5)),
                     Text('\$${_totalSelected.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
-                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+                        style: const TextStyle(fontFamily: 'Inter', fontSize: 20, fontWeight: FontWeight.w800, color: AppColors.lightTextPrimary)),
                   ],
                 ),
               ],
@@ -73,12 +79,18 @@ class _TransferSourcePageState extends State<TransferSourcePage> {
           const SizedBox(height: 16),
 
           // Fund list
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Your Investment Funds',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                const Text('Your Investment Funds',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 14),
                 ..._funds.map((fund) {
                   final isSelected = _selected.contains(fund.id);
@@ -93,10 +105,10 @@ class _TransferSourcePageState extends State<TransferSourcePage> {
                         duration: const Duration(milliseconds: 200),
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: isSelected ? fund.color.withValues(alpha: 0.05) : scheme.surfaceContainerLowest,
+                          color: isSelected ? fund.color.withValues(alpha: 0.05) : AppColors.lightShell,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: isSelected ? fund.color : scheme.outline,
+                            color: isSelected ? fund.color : AppColors.lightBorder,
                             width: isSelected ? 1.5 : 1,
                           ),
                         ),
@@ -115,10 +127,7 @@ class _TransferSourcePageState extends State<TransferSourcePage> {
                               visualDensity: VisualDensity.compact,
                             ),
                             const SizedBox(width: 8),
-                            Container(
-                              width: 10, height: 10,
-                              decoration: BoxDecoration(color: fund.color, shape: BoxShape.circle),
-                            ),
+                            Container(width: 10, height: 10, decoration: BoxDecoration(color: fund.color, shape: BoxShape.circle)),
                             const SizedBox(width: 10),
                             Expanded(
                               child: Column(
@@ -126,33 +135,28 @@ class _TransferSourcePageState extends State<TransferSourcePage> {
                                 children: [
                                   Row(
                                     children: [
-                                      Expanded(
-                                        child: Text(fund.name,
-                                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                                      ),
+                                      Expanded(child: Text(fund.name,
+                                          style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary))),
                                       Text(fund.ticker,
-                                          style: TextStyle(fontSize: 10, color: scheme.onSurfaceVariant, fontFamily: 'monospace')),
+                                          style: const TextStyle(fontFamily: 'monospace', fontSize: 10, color: AppColors.lightTextSecondary)),
                                     ],
                                   ),
                                   const SizedBox(height: 2),
                                   Row(
                                     children: [
                                       Text('${fund.allocation}% of portfolio',
-                                          style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant)),
+                                          style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.lightTextSecondary)),
                                       const SizedBox(width: 10),
-                                      Icon(
-                                        fund.ytdReturn > 0 ? Icons.trending_up : Icons.trending_down,
-                                        size: 12, color: AppColors.success,
-                                      ),
+                                      const Icon(Icons.trending_up, size: 12, color: AppColors.success),
                                       Text('+${fund.ytdReturn}% YTD',
-                                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.success)),
+                                          style: const TextStyle(fontFamily: 'Inter', fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.success)),
                                     ],
                                   ),
                                 ],
                               ),
                             ),
                             Text('\$${fund.balance.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')}',
-                                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
+                                style: const TextStyle(fontFamily: 'Inter', fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                           ],
                         ),
                       ),

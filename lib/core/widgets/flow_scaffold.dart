@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../providers/company_theme_provider.dart';
+import '../design_system/components/app_button.dart';
 
-class FlowScaffold extends StatelessWidget {
+class FlowScaffold extends ConsumerWidget {
   final String title;
   final int currentStep;
   final int totalSteps;
@@ -20,7 +22,7 @@ class FlowScaffold extends StatelessWidget {
     required this.currentStep,
     required this.totalSteps,
     required this.body,
-    this.primaryLabel = 'Next',
+    this.primaryLabel = 'Continue',
     this.onPrimary,
     this.primaryEnabled = true,
     this.showBack = true,
@@ -30,19 +32,20 @@ class FlowScaffold extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final companyTheme = ref.watch(companyThemeProvider);
     final progress = currentStep / totalSteps;
     final topPad = MediaQuery.of(context).padding.top;
+    final bottomPad = MediaQuery.of(context).padding.bottom;
+    final cs = Theme.of(context).colorScheme;
 
-    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: scheme.surfaceContainerLowest,
+      backgroundColor: cs.surfaceContainerLowest,
       body: Column(
         children: [
-          // Custom header with step indicator
           Container(
-            color: scheme.surface,
-            padding: EdgeInsets.fromLTRB(20, topPad + 12, 20, 0),
+            color: cs.surface,
+            padding: EdgeInsets.fromLTRB(20, topPad + 8, 20, 0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -51,112 +54,58 @@ class FlowScaffold extends StatelessWidget {
                     if (showBack)
                       GestureDetector(
                         onTap: onBack ?? () => Navigator.of(context).maybePop(),
-                        child: Container(
-                          width: 36,
-                          height: 36,
-                          decoration: BoxDecoration(
-                            color: scheme.surfaceContainerHigh,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Icon(Icons.arrow_back, size: 18, color: scheme.onSurface),
-                        ),
+                        child: Icon(Icons.arrow_back_ios_new, size: 20, color: cs.onSurface),
                       )
                     else
-                      const SizedBox(width: 36),
-                    const SizedBox(width: 12),
+                      const SizedBox(width: 20),
+                    const SizedBox(width: 16),
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            title,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                              color: scheme.onSurface,
-                            ),
-                          ),
-                          Text(
-                            'Step $currentStep of $totalSteps',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: scheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ],
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: cs.onSurface,
+                          letterSpacing: -0.2,
+                        ),
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      child: Text(
-                        '${(progress * 100).toStringAsFixed(0)}%',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primary,
-                        ),
+                    Text(
+                      '$currentStep / $totalSteps',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 13,
+                        color: cs.onSurfaceVariant,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-
-                // Segmented step dots
-                Row(
-                  children: List.generate(totalSteps, (i) {
-                    final done = i < currentStep;
-                    final active = i == currentStep - 1;
-                    return Expanded(
-                      child: Container(
-                        margin: EdgeInsets.only(right: i < totalSteps - 1 ? 4 : 0),
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: done || active
-                              ? AppColors.primary
-                              : scheme.surfaceContainerHigh,
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                    );
-                  }),
+                const SizedBox(height: 14),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(100),
+                  child: LinearProgressIndicator(
+                    value: progress,
+                    backgroundColor: cs.outlineVariant,
+                    valueColor: AlwaysStoppedAnimation(companyTheme.primaryColor),
+                    minHeight: 3,
+                  ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 4),
               ],
             ),
           ),
-
-          // Body
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
               child: body,
             ),
           ),
-
-          // Bottom action bar
           Container(
-            padding: EdgeInsets.fromLTRB(
-              20,
-              12,
-              20,
-              MediaQuery.of(context).padding.bottom + 12,
-            ),
+            padding: EdgeInsets.fromLTRB(24, 12, 24, bottomPad + 12),
             decoration: BoxDecoration(
-              color: scheme.surface,
-              border: const Border(
-                top: BorderSide(color: Color(0xFFE5E7EB), width: 0.5),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.06),
-                  blurRadius: 12,
-                  offset: const Offset(0, -4),
-                ),
-              ],
+              color: cs.surface,
+              border: Border(top: BorderSide(color: cs.outlineVariant, width: 1)),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -165,50 +114,11 @@ class FlowScaffold extends StatelessWidget {
                   secondaryAction!,
                   const SizedBox(height: 10),
                 ],
-                GestureDetector(
-                  onTap: primaryEnabled && !isLoading ? onPrimary : null,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    height: 54,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      gradient: primaryEnabled
-                          ? const LinearGradient(
-                              colors: [AppColors.primary, AppColors.primaryHover],
-                            )
-                          : null,
-                      color: primaryEnabled ? null : const Color(0xFFE5E7EB),
-                      borderRadius: BorderRadius.circular(14),
-                      boxShadow: primaryEnabled
-                          ? [
-                              BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.3),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Center(
-                      child: isLoading
-                          ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                color: Colors.white,
-                              ),
-                            )
-                          : Text(
-                              primaryLabel,
-                              style: TextStyle(
-                                color: primaryEnabled ? Colors.white : const Color(0xFF9CA3AF),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                    ),
-                  ),
+                AppButton(
+                  label: primaryLabel,
+                  loading: isLoading,
+                  enabled: primaryEnabled,
+                  onPressed: onPrimary,
                 ),
               ],
             ),

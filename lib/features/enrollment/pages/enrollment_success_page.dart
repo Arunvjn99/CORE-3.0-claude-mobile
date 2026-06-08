@@ -8,9 +8,8 @@ class EnrollmentSuccessPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: scheme.surfaceContainerLowest,
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -35,7 +34,7 @@ class EnrollmentSuccessPage extends StatelessWidget {
                 "You're Enrolled!",
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.w800,
-                  color: scheme.onSurface,
+                  color: AppColors.lightTextPrimary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -43,7 +42,7 @@ class EnrollmentSuccessPage extends StatelessWidget {
               Text(
                 'Your retirement plan is now active. Your first contribution will be deducted from your next paycheck.',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: scheme.onSurfaceVariant,
+                  color: AppColors.lightTextSecondary,
                   height: 1.5,
                 ),
                 textAlign: TextAlign.center,

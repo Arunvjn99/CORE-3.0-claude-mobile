@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/widgets/app_card.dart';
 import '../../../../../core/widgets/flow_scaffold.dart';
 
 class RebalanceCurrentPage extends StatelessWidget {
@@ -24,7 +23,6 @@ class RebalanceCurrentPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return FlowScaffold(
       title: 'Current Allocation',
       currentStep: 1,
@@ -35,15 +33,21 @@ class RebalanceCurrentPage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Current Allocation',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+          const Text('Current Allocation',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
           const SizedBox(height: 8),
-          Text('Review your current portfolio allocation and see where rebalancing is needed.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+          const Text('Review your current portfolio allocation and see where rebalancing is needed.',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
           const SizedBox(height: 20),
 
           // Portfolio summary
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -53,31 +57,29 @@ class RebalanceCurrentPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('TOTAL PORTFOLIO', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: scheme.onSurfaceVariant, letterSpacing: 0.5)),
-                          const Text('\$30,000', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900)),
+                          const Text('TOTAL PORTFOLIO',
+                              style: TextStyle(fontFamily: 'Inter', fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.lightTextSecondary, letterSpacing: 0.5)),
+                          const Text('\$30,000',
+                              style: TextStyle(fontFamily: 'Inter', fontSize: 24, fontWeight: FontWeight.w900, color: AppColors.lightTextPrimary)),
                         ],
                       ),
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: AppColors.warningBg,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                      decoration: BoxDecoration(color: AppColors.warningBg, borderRadius: BorderRadius.circular(8)),
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(Icons.warning_amber, size: 14, color: AppColors.warning),
                           SizedBox(width: 4),
-                          Text('Rebalance Needed', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.warning)),
+                          Text('Rebalance Needed',
+                              style: TextStyle(fontFamily: 'Inter', fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.warning)),
                         ],
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 20),
-
-                // Stacked bar chart representation
                 ClipRRect(
                   borderRadius: BorderRadius.circular(6),
                   child: Row(
@@ -88,8 +90,6 @@ class RebalanceCurrentPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10),
-
-                // Legend
                 Wrap(
                   spacing: 12, runSpacing: 6,
                   children: _funds.map((f) => Row(
@@ -97,7 +97,8 @@ class RebalanceCurrentPage extends StatelessWidget {
                     children: [
                       Container(width: 8, height: 8, decoration: BoxDecoration(color: f.$5, shape: BoxShape.circle)),
                       const SizedBox(width: 4),
-                      Text('${f.$1.split(' ')[0]} ${f.$3.toInt()}%', style: const TextStyle(fontSize: 10)),
+                      Text('${f.$1.split(' ')[0]} ${f.$3.toInt()}%',
+                          style: const TextStyle(fontFamily: 'Inter', fontSize: 10, color: AppColors.lightTextSecondary)),
                     ],
                   )).toList(),
                 ),
@@ -107,12 +108,18 @@ class RebalanceCurrentPage extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Fund breakdown
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Fund Breakdown',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                const Text('Fund Breakdown',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 14),
                 ..._funds.map((f) {
                   final target = _targetAlloc.firstWhere((t) => t.$1 == f.$1, orElse: () => (f.$1, f.$3, f.$5));
@@ -125,21 +132,16 @@ class RebalanceCurrentPage extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Container(width: 10, height: 10,
-                                decoration: BoxDecoration(color: f.$5, shape: BoxShape.circle)),
+                            Container(width: 10, height: 10, decoration: BoxDecoration(color: f.$5, shape: BoxShape.circle)),
                             const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(f.$1, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                            ),
+                            Expanded(child: Text(f.$1,
+                                style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary))),
                             if (isDrifted)
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: AppColors.warningBg,
-                                  borderRadius: BorderRadius.circular(4),
-                                ),
+                                decoration: BoxDecoration(color: AppColors.warningBg, borderRadius: BorderRadius.circular(4)),
                                 child: Text('+${drift.toStringAsFixed(0)}% drift',
-                                    style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: AppColors.warning)),
+                                    style: const TextStyle(fontFamily: 'Inter', fontSize: 9, fontWeight: FontWeight.w700, color: AppColors.warning)),
                               ),
                           ],
                         ),
@@ -163,16 +165,17 @@ class RebalanceCurrentPage extends StatelessWidget {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('${f.$3.toInt()}%', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                                  Text('${f.$3.toInt()}%',
+                                      style: const TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                                   Text('→ ${target.$2.toInt()}%',
-                                      style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant)),
+                                      style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.lightTextSecondary)),
                                 ],
                               ),
                             ),
                           ],
                         ),
                         Text('\$${f.$4.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (m) => '${m[1]},')} · ${f.$6}% YTD',
-                            style: TextStyle(fontSize: 10, color: scheme.onSurfaceVariant)),
+                            style: const TextStyle(fontFamily: 'Inter', fontSize: 10, color: AppColors.lightTextSecondary)),
                       ],
                     ),
                   );

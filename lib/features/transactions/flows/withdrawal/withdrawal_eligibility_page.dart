@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/widgets/app_card.dart';
 import '../../../../../core/widgets/flow_scaffold.dart';
 
 class WithdrawalEligibilityPage extends StatelessWidget {
@@ -10,8 +9,6 @@ class WithdrawalEligibilityPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     final eligibilityChecks = [
       (label: 'Hardship Withdrawal', eligible: true, note: 'Available with documentation'),
       (label: 'In-Service Withdrawal', eligible: false, note: 'Requires age 59½ (current: 42)'),
@@ -29,20 +26,26 @@ class WithdrawalEligibilityPage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Withdrawal Eligibility',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+          const Text('Withdrawal Eligibility',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
           const SizedBox(height: 8),
-          Text('Review your withdrawal eligibility and understand the tax implications.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+          const Text('Review your withdrawal eligibility and understand the tax implications.',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
           const SizedBox(height: 20),
 
           // Key metrics
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Withdrawal Details',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                const Text('Withdrawal Details',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 16),
                 _MetricRow(icon: Icons.attach_money, label: 'Available to Withdraw', value: '\$5,000', color: AppColors.primary),
                 const SizedBox(height: 12),
@@ -55,34 +58,43 @@ class WithdrawalEligibilityPage extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Eligibility checks
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Withdrawal Type Eligibility',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                const Text('Withdrawal Type Eligibility',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 12),
                 ...eligibilityChecks.map((check) => Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: check.eligible
-                          ? AppColors.successBg
-                          : scheme.surfaceContainerHighest,
+                      color: check.eligible ? AppColors.successBg : AppColors.lightShell,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: check.eligible
-                            ? AppColors.success.withValues(alpha: 0.3)
-                            : scheme.outline.withValues(alpha: 0.3),
+                        color: check.eligible ? AppColors.success.withValues(alpha: 0.3) : AppColors.lightBorder,
                       ),
                     ),
                     child: Row(
                       children: [
-                        Icon(
-                          check.eligible ? Icons.check_circle : Icons.cancel_outlined,
-                          size: 18,
-                          color: check.eligible ? AppColors.success : scheme.onSurfaceVariant,
+                        Container(
+                          width: 44, height: 44,
+                          decoration: BoxDecoration(
+                            color: check.eligible ? AppColors.iconBgGreen : AppColors.lightShell,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            check.eligible ? Icons.check_circle : Icons.cancel_outlined,
+                            size: 20,
+                            color: check.eligible ? AppColors.success : AppColors.lightTextSecondary,
+                          ),
                         ),
                         const SizedBox(width: 10),
                         Expanded(
@@ -91,26 +103,25 @@ class WithdrawalEligibilityPage extends StatelessWidget {
                             children: [
                               Text(check.label,
                                   style: TextStyle(
-                                    fontSize: 13, fontWeight: FontWeight.w600,
-                                    color: check.eligible ? scheme.onSurface : scheme.onSurfaceVariant,
+                                    fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600,
+                                    color: check.eligible ? AppColors.lightTextPrimary : AppColors.lightTextSecondary,
                                   )),
-                              Text(check.note, style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant)),
+                              Text(check.note,
+                                  style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.lightTextSecondary)),
                             ],
                           ),
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
-                            color: check.eligible
-                                ? AppColors.success.withValues(alpha: 0.15)
-                                : scheme.surfaceContainer,
+                            color: check.eligible ? AppColors.success.withValues(alpha: 0.15) : AppColors.lightBorder,
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
                             check.eligible ? 'Eligible' : 'Not Eligible',
                             style: TextStyle(
-                              fontSize: 10, fontWeight: FontWeight.w700,
-                              color: check.eligible ? AppColors.success : scheme.onSurfaceVariant,
+                              fontFamily: 'Inter', fontSize: 10, fontWeight: FontWeight.w700,
+                              color: check.eligible ? AppColors.success : AppColors.lightTextSecondary,
                             ),
                           ),
                         ),
@@ -141,7 +152,7 @@ class WithdrawalEligibilityPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text('Important Restrictions',
-                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.warning)),
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.warning)),
                       const SizedBox(height: 8),
                       ...[
                         'Hardship withdrawals require documentation of financial need',
@@ -158,7 +169,8 @@ class WithdrawalEligibilityPage extends StatelessWidget {
                               margin: const EdgeInsets.only(top: 7, right: 8),
                               decoration: const BoxDecoration(color: AppColors.warning, shape: BoxShape.circle),
                             ),
-                            Expanded(child: Text(text, style: const TextStyle(fontSize: 12, color: AppColors.warning))),
+                            Expanded(child: Text(text,
+                                style: const TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.warning))),
                           ],
                         ),
                       )),
@@ -187,10 +199,10 @@ class _MetricRow extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 40, height: 40,
+          width: 44, height: 44,
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Icon(icon, color: color, size: 20),
         ),
@@ -199,8 +211,8 @@ class _MetricRow extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant)),
-              Text(value, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: color)),
+              Text(label, style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.lightTextSecondary)),
+              Text(value, style: TextStyle(fontFamily: 'Inter', fontSize: 18, fontWeight: FontWeight.w800, color: color)),
             ],
           ),
         ),

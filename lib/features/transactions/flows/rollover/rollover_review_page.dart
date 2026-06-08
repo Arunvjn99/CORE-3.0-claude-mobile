@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/widgets/app_card.dart';
 import '../../../../../core/widgets/flow_scaffold.dart';
 
 class RolloverReviewPage extends StatefulWidget {
@@ -29,10 +28,9 @@ class _RolloverReviewPageState extends State<RolloverReviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     if (_submitted) {
       return Scaffold(
+        backgroundColor: Colors.white,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(32),
@@ -41,19 +39,21 @@ class _RolloverReviewPageState extends State<RolloverReviewPage> {
               children: [
                 Container(
                   width: 64, height: 64,
-                  decoration: BoxDecoration(color: AppColors.successBg, shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.success.withValues(alpha: 0.3))),
+                  decoration: BoxDecoration(
+                    color: AppColors.successBg, shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
+                  ),
                   child: const Icon(Icons.check_circle_outline, color: AppColors.success, size: 32),
                 ),
                 const SizedBox(height: 20),
-                Text('Rollover Submitted',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+                const Text('Rollover Submitted',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 8),
-                Text('Your rollover request has been submitted. Processing takes 5-10 business days after document verification.',
+                const Text('Your rollover request has been submitted. Processing takes 5-10 business days after document verification.',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
                 const SizedBox(height: 16),
-                Text('Redirecting...', style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant)),
+                const Text('Redirecting...', style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextSecondary)),
               ],
             ),
           ),
@@ -73,22 +73,28 @@ class _RolloverReviewPageState extends State<RolloverReviewPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Review and Submit',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+          const Text('Review and Submit',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
           const SizedBox(height: 8),
-          Text('Review your rollover details before final submission.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+          const Text('Review your rollover details before final submission.',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
           const SizedBox(height: 20),
 
           // Rollover details
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: [
-                  const Icon(Icons.replay, color: AppColors.info, size: 16),
-                  const SizedBox(width: 6),
-                  Text('Rollover Details', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                const Row(children: [
+                  Icon(Icons.replay, color: AppColors.primary, size: 16),
+                  SizedBox(width: 6),
+                  Text('Rollover Details', style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 ]),
                 const SizedBox(height: 12),
                 _DetailRow(label: 'From Plan', value: 'Acme Corporation 401(k)'),
@@ -108,12 +114,18 @@ class _RolloverReviewPageState extends State<RolloverReviewPage> {
           const SizedBox(height: 12),
 
           // Allocation
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Investment Allocation',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                const Text('Investment Allocation',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 12),
                 ...[
                   ('Large Cap Equity Fund', 40.0, AppColors.primary),
@@ -128,8 +140,8 @@ class _RolloverReviewPageState extends State<RolloverReviewPage> {
                         children: [
                           Container(width: 8, height: 8, decoration: BoxDecoration(color: f.$3, shape: BoxShape.circle)),
                           const SizedBox(width: 8),
-                          Expanded(child: Text(f.$1, style: const TextStyle(fontSize: 12))),
-                          Text('${f.$2.toInt()}%', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                          Expanded(child: Text(f.$1, style: const TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextPrimary))),
+                          Text('${f.$2.toInt()}%', style: const TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                         ],
                       ),
                       const SizedBox(height: 4),
@@ -149,7 +161,7 @@ class _RolloverReviewPageState extends State<RolloverReviewPage> {
                           ),
                           const SizedBox(width: 8),
                           Text('\$${(45000 * f.$2 / 100).round()}',
-                              style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                              style: const TextStyle(fontFamily: 'Inter', fontSize: 10, color: AppColors.lightTextSecondary)),
                         ],
                       ),
                     ],
@@ -161,26 +173,29 @@ class _RolloverReviewPageState extends State<RolloverReviewPage> {
           const SizedBox(height: 12),
 
           // Documents acknowledged
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: [
-                  const Icon(Icons.check_circle, color: AppColors.success, size: 16),
-                  const SizedBox(width: 6),
-                  Text('Documents', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                const Row(children: [
+                  Icon(Icons.check_circle, color: AppColors.success, size: 16),
+                  SizedBox(width: 6),
+                  Text('Documents', style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 ]),
                 const SizedBox(height: 10),
-                ...[
-                  'Distribution Statement — Acknowledged',
-                  'Form 1099-R — Acknowledged',
-                ].map((d) => Padding(
+                ...['Distribution Statement — Acknowledged', 'Form 1099-R — Acknowledged'].map((d) => Padding(
                   padding: const EdgeInsets.only(bottom: 4),
                   child: Row(
                     children: [
                       const Icon(Icons.check, size: 14, color: AppColors.success),
                       const SizedBox(width: 8),
-                      Text(d, style: const TextStyle(fontSize: 12)),
+                      Text(d, style: const TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextPrimary)),
                     ],
                   ),
                 )),
@@ -189,7 +204,13 @@ class _RolloverReviewPageState extends State<RolloverReviewPage> {
           ),
           const SizedBox(height: 12),
 
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -199,7 +220,8 @@ class _RolloverReviewPageState extends State<RolloverReviewPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Rollover Agreement', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
+                      const Text('Rollover Agreement',
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                       const SizedBox(height: 8),
                       GestureDetector(
                         onTap: () => setState(() => _agreed = !_agreed),
@@ -214,10 +236,10 @@ class _RolloverReviewPageState extends State<RolloverReviewPage> {
                               visualDensity: VisualDensity.compact,
                             ),
                             const SizedBox(width: 8),
-                            Expanded(
+                            const Expanded(
                               child: Text(
                                 'I authorize this rollover from my previous plan. I understand the tax implications and certify that all information provided is accurate. I have read and understood the rollover documentation.',
-                                style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant, height: 1.4),
+                                style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextSecondary, height: 1.4),
                               ),
                             ),
                           ],
@@ -242,11 +264,10 @@ class _DetailRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Row(
       children: [
-        Expanded(child: Text(label, style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant))),
-        Text(value, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+        Expanded(child: Text(label, style: const TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextSecondary))),
+        Text(value, style: const TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
       ],
     );
   }

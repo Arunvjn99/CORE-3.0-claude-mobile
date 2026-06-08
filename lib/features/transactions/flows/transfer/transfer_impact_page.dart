@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/widgets/app_card.dart';
 import '../../../../../core/widgets/flow_scaffold.dart';
 
 class TransferImpactPage extends StatelessWidget {
@@ -10,8 +9,6 @@ class TransferImpactPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     const transferAmount = 5000;
     const fromFund = 'Large Cap Equity Fund';
     const toFund = 'Small Cap Growth Fund';
@@ -41,26 +38,34 @@ class TransferImpactPage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Transfer Impact',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+          const Text('Transfer Impact',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
           const SizedBox(height: 8),
-          Text('Review how this transfer will affect your portfolio allocation.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+          const Text('Review how this transfer will affect your portfolio allocation.',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
           const SizedBox(height: 20),
 
           // Transfer summary arrow
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Row(
               children: [
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text('FROM', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: scheme.onSurfaceVariant, letterSpacing: 0.5)),
+                      const Text('FROM',
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.lightTextSecondary, letterSpacing: 0.5)),
                       const SizedBox(height: 4),
                       const Text(fromFund, textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
-                      Text('\$$transferAmount', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.danger)),
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
+                      const Text('\$$transferAmount',
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.danger)),
                     ],
                   ),
                 ),
@@ -73,11 +78,13 @@ class TransferImpactPage extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text('TO', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: scheme.onSurfaceVariant, letterSpacing: 0.5)),
+                      const Text('TO',
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.lightTextSecondary, letterSpacing: 0.5)),
                       const SizedBox(height: 4),
                       const Text(toFund, textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
-                      Text('\$$transferAmount', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.success)),
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
+                      const Text('\$$transferAmount',
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.success)),
                     ],
                   ),
                 ),
@@ -87,12 +94,18 @@ class TransferImpactPage extends StatelessWidget {
           const SizedBox(height: 16),
 
           // Before / After allocations
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Portfolio Allocation Change',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                const Text('Portfolio Allocation Change',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 16),
                 Row(
                   children: [
@@ -100,18 +113,20 @@ class TransferImpactPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('BEFORE', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: scheme.onSurfaceVariant, letterSpacing: 0.5)),
+                          const Text('BEFORE',
+                              style: TextStyle(fontFamily: 'Inter', fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.lightTextSecondary, letterSpacing: 0.5)),
                           const SizedBox(height: 8),
                           ...beforeAlloc.map((f) => Padding(
                             padding: const EdgeInsets.only(bottom: 6),
                             child: Row(
                               children: [
-                                Container(width: 8, height: 8,
-                                    decoration: BoxDecoration(color: f.$3, shape: BoxShape.circle)),
+                                Container(width: 8, height: 8, decoration: BoxDecoration(color: f.$3, shape: BoxShape.circle)),
                                 const SizedBox(width: 6),
-                                Expanded(child: Text(f.$1, style: const TextStyle(fontSize: 10), overflow: TextOverflow.ellipsis)),
+                                Expanded(child: Text(f.$1,
+                                    style: const TextStyle(fontFamily: 'Inter', fontSize: 10, color: AppColors.lightTextPrimary), overflow: TextOverflow.ellipsis)),
                                 const SizedBox(width: 4),
-                                Text('${f.$2.toInt()}%', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700)),
+                                Text('${f.$2.toInt()}%',
+                                    style: const TextStyle(fontFamily: 'Inter', fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                               ],
                             ),
                           )),
@@ -126,18 +141,20 @@ class TransferImpactPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('AFTER', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.primary, letterSpacing: 0.5)),
+                          const Text('AFTER',
+                              style: TextStyle(fontFamily: 'Inter', fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.primary, letterSpacing: 0.5)),
                           const SizedBox(height: 8),
                           ...afterAlloc.map((f) => Padding(
                             padding: const EdgeInsets.only(bottom: 6),
                             child: Row(
                               children: [
-                                Container(width: 8, height: 8,
-                                    decoration: BoxDecoration(color: f.$3, shape: BoxShape.circle)),
+                                Container(width: 8, height: 8, decoration: BoxDecoration(color: f.$3, shape: BoxShape.circle)),
                                 const SizedBox(width: 6),
-                                Expanded(child: Text(f.$1, style: const TextStyle(fontSize: 10), overflow: TextOverflow.ellipsis)),
+                                Expanded(child: Text(f.$1,
+                                    style: const TextStyle(fontFamily: 'Inter', fontSize: 10, color: AppColors.lightTextPrimary), overflow: TextOverflow.ellipsis)),
                                 const SizedBox(width: 4),
-                                Text('${f.$2.toInt()}%', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.primary)),
+                                Text('${f.$2.toInt()}%',
+                                    style: const TextStyle(fontFamily: 'Inter', fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.primary)),
                               ],
                             ),
                           )),
@@ -158,15 +175,15 @@ class TransferImpactPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
             ),
-            child: Row(
+            child: const Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.access_time, size: 16, color: AppColors.warning),
-                const SizedBox(width: 8),
-                const Expanded(
+                Icon(Icons.access_time, size: 16, color: AppColors.warning),
+                SizedBox(width: 8),
+                Expanded(
                   child: Text(
                     'This transfer will be executed at the next market close. Actual allocation percentages may vary slightly due to market price changes.',
-                    style: TextStyle(fontSize: 12, color: AppColors.warning, height: 1.4),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.warning, height: 1.4),
                   ),
                 ),
               ],

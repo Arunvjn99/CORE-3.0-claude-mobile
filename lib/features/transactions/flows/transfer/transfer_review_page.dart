@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/widgets/app_card.dart';
 import '../../../../../core/widgets/flow_scaffold.dart';
 
 class TransferReviewPage extends StatefulWidget {
@@ -29,10 +28,9 @@ class _TransferReviewPageState extends State<TransferReviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     if (_submitted) {
       return Scaffold(
+        backgroundColor: Colors.white,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(32),
@@ -41,19 +39,21 @@ class _TransferReviewPageState extends State<TransferReviewPage> {
               children: [
                 Container(
                   width: 64, height: 64,
-                  decoration: BoxDecoration(color: AppColors.successBg, shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.success.withValues(alpha: 0.3))),
+                  decoration: BoxDecoration(
+                    color: AppColors.successBg, shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
+                  ),
                   child: const Icon(Icons.check_circle_outline, color: AppColors.success, size: 32),
                 ),
                 const SizedBox(height: 20),
-                Text('Transfer Submitted',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+                const Text('Transfer Submitted',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 8),
-                Text('Your transfer request has been submitted and will be processed at the next market close.',
+                const Text('Your transfer request has been submitted and will be processed at the next market close.',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
                 const SizedBox(height: 16),
-                Text('Redirecting...', style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant)),
+                const Text('Redirecting...', style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextSecondary)),
               ],
             ),
           ),
@@ -73,21 +73,28 @@ class _TransferReviewPageState extends State<TransferReviewPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Review and Submit',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+          const Text('Review and Submit',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
           const SizedBox(height: 8),
-          Text('Confirm your transfer details before submitting.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+          const Text('Confirm your transfer details before submitting.',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
           const SizedBox(height: 20),
 
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: [
-                  const Icon(Icons.swap_horiz, color: AppColors.primary, size: 16),
-                  const SizedBox(width: 6),
-                  Text('Transfer Details', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                const Row(children: [
+                  Icon(Icons.swap_horiz, color: AppColors.primary, size: 16),
+                  SizedBox(width: 6),
+                  Text('Transfer Details',
+                      style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 ]),
                 const SizedBox(height: 12),
                 _DetailRow(label: 'Transfer Type', value: 'Existing Balance'),
@@ -107,14 +114,21 @@ class _TransferReviewPageState extends State<TransferReviewPage> {
           const SizedBox(height: 12),
 
           // Allocation change summary
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: [
-                  const Icon(Icons.pie_chart_outline, color: AppColors.primary, size: 16),
-                  const SizedBox(width: 6),
-                  Text('Allocation Change', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                const Row(children: [
+                  Icon(Icons.pie_chart_outline, color: AppColors.primary, size: 16),
+                  SizedBox(width: 6),
+                  Text('Allocation Change',
+                      style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 ]),
                 const SizedBox(height: 12),
                 Row(
@@ -123,15 +137,17 @@ class _TransferReviewPageState extends State<TransferReviewPage> {
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: scheme.surfaceContainerHighest,
+                          color: AppColors.lightShell,
                           borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: AppColors.lightBorder),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('LCEF', style: TextStyle(fontSize: 10, color: scheme.onSurfaceVariant, fontWeight: FontWeight.w600)),
+                            const Text('LCEF',
+                                style: TextStyle(fontFamily: 'Inter', fontSize: 10, color: AppColors.lightTextSecondary, fontWeight: FontWeight.w600)),
                             const Text('40% → 23%',
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: AppColors.danger)),
+                                style: TextStyle(fontFamily: 'Inter', fontSize: 14, fontWeight: FontWeight.w800, color: AppColors.danger)),
                           ],
                         ),
                       ),
@@ -146,13 +162,15 @@ class _TransferReviewPageState extends State<TransferReviewPage> {
                         decoration: BoxDecoration(
                           color: AppColors.successBg,
                           borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: AppColors.success.withValues(alpha: 0.2)),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('SCGF', style: const TextStyle(fontSize: 10, color: AppColors.success, fontWeight: FontWeight.w600)),
+                            const Text('SCGF',
+                                style: TextStyle(fontFamily: 'Inter', fontSize: 10, color: AppColors.success, fontWeight: FontWeight.w600)),
                             const Text('0% → 17%',
-                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: AppColors.success)),
+                                style: TextStyle(fontFamily: 'Inter', fontSize: 14, fontWeight: FontWeight.w800, color: AppColors.success)),
                           ],
                         ),
                       ),
@@ -164,7 +182,13 @@ class _TransferReviewPageState extends State<TransferReviewPage> {
           ),
           const SizedBox(height: 12),
 
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -174,7 +198,8 @@ class _TransferReviewPageState extends State<TransferReviewPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Transfer Agreement', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
+                      const Text('Transfer Agreement',
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                       const SizedBox(height: 8),
                       GestureDetector(
                         onTap: () => setState(() => _agreed = !_agreed),
@@ -189,10 +214,10 @@ class _TransferReviewPageState extends State<TransferReviewPage> {
                               visualDensity: VisualDensity.compact,
                             ),
                             const SizedBox(width: 8),
-                            Expanded(
+                            const Expanded(
                               child: Text(
                                 'I authorize this fund transfer and understand that the transaction will be processed at the next market close. The actual transfer price may differ from the current NAV.',
-                                style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant, height: 1.4),
+                                style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextSecondary, height: 1.4),
                               ),
                             ),
                           ],
@@ -217,11 +242,10 @@ class _DetailRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Row(
       children: [
-        Expanded(child: Text(label, style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant))),
-        Text(value, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+        Expanded(child: Text(label, style: const TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextSecondary))),
+        Text(value, style: const TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
       ],
     );
   }

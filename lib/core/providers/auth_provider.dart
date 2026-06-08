@@ -52,10 +52,12 @@ class AuthNotifier extends StateNotifier<AsyncValue<void>> {
       state = const AsyncValue.data(null);
       final msg = e.toString();
       if (msg.contains('SocketException') ||
+          msg.contains('ClientException') ||
           msg.contains('Failed host') ||
           msg.contains('TimeoutException') ||
-          msg.contains('NetworkException')) {
-        return 'No internet connection. Use Demo Mode to explore the app.';
+          msg.contains('NetworkException') ||
+          msg.contains('No address')) {
+        return 'Cannot connect to server. Tap "Explore Demo Mode" to try the app offline.';
       }
       return 'Sign in failed. Please try again.';
     }
@@ -77,9 +79,11 @@ class AuthNotifier extends StateNotifier<AsyncValue<void>> {
       state = const AsyncValue.data(null);
       final msg = e.toString();
       if (msg.contains('SocketException') ||
+          msg.contains('ClientException') ||
           msg.contains('Failed host') ||
-          msg.contains('TimeoutException')) {
-        return 'No internet connection. Use Demo Mode to explore the app.';
+          msg.contains('TimeoutException') ||
+          msg.contains('No address')) {
+        return 'Cannot connect to server. Tap "Explore Demo Mode" to try the app offline.';
       }
       return 'Sign up failed. Please try again.';
     }

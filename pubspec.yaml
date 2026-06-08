@@ -67,4 +67,6 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/transamerica_logo.png
     - assets/icons/
+    - assets/icons/core_logo.svg

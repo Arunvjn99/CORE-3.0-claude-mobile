@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/widgets/app_card.dart';
 import '../../../../../core/widgets/flow_scaffold.dart';
 
 class WithdrawalReviewPage extends StatefulWidget {
@@ -36,10 +35,9 @@ class _WithdrawalReviewPageState extends State<WithdrawalReviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     if (_submitted) {
       return Scaffold(
+        backgroundColor: Colors.white,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(32),
@@ -56,16 +54,17 @@ class _WithdrawalReviewPageState extends State<WithdrawalReviewPage> {
                   child: const Icon(Icons.check_circle_outline, color: AppColors.success, size: 32),
                 ),
                 const SizedBox(height: 20),
-                Text('Withdrawal Submitted',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+                const Text('Withdrawal Submitted',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 8),
-                Text(
+                const Text(
                   'Your withdrawal request has been submitted successfully. You\'ll receive confirmation shortly.',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant),
+                  style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary),
                 ),
                 const SizedBox(height: 16),
-                Text('Redirecting to dashboard...', style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant)),
+                const Text('Redirecting to dashboard...',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextSecondary)),
               ],
             ),
           ),
@@ -85,23 +84,29 @@ class _WithdrawalReviewPageState extends State<WithdrawalReviewPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Review and Submit',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+          const Text('Review and Submit',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
           const SizedBox(height: 8),
-          Text('Review your withdrawal details carefully before submitting.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+          const Text('Review your withdrawal details carefully before submitting.',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
           const SizedBox(height: 20),
 
           // Withdrawal details
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: [
-                  const Icon(Icons.attach_money, color: AppColors.primary, size: 16),
-                  const SizedBox(width: 6),
+                const Row(children: [
+                  Icon(Icons.attach_money, color: AppColors.primary, size: 16),
+                  SizedBox(width: 6),
                   Text('Withdrawal Details',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                      style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 ]),
                 const SizedBox(height: 12),
                 Row(
@@ -119,29 +124,37 @@ class _WithdrawalReviewPageState extends State<WithdrawalReviewPage> {
           const SizedBox(height: 12),
 
           // Payout breakdown
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: [
-                  const Icon(Icons.payments_outlined, color: AppColors.primary, size: 16),
-                  const SizedBox(width: 6),
+                const Row(children: [
+                  Icon(Icons.payments_outlined, color: AppColors.primary, size: 16),
+                  SizedBox(width: 6),
                   Text('Payout Breakdown',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                      style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 ]),
                 const SizedBox(height: 12),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.06),
+                    color: AppColors.iconBgBlue,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
                   ),
                   child: Row(
                     children: [
-                      Text('Withdrawal Amount', style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant)),
+                      const Text('Withdrawal Amount',
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 13, color: AppColors.lightTextSecondary)),
                       const Spacer(),
-                      const Text('\$$_amount', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.primary)),
+                      const Text('\$$_amount',
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.primary)),
                     ],
                   ),
                 ),
@@ -158,11 +171,13 @@ class _WithdrawalReviewPageState extends State<WithdrawalReviewPage> {
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(color: AppColors.success.withValues(alpha: 0.2)),
                   ),
-                  child: Row(
+                  child: const Row(
                     children: [
-                      const Text('Final Payout', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
-                      const Spacer(),
-                      const Text('\$$_finalPayout', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.success)),
+                      Text('Final Payout',
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
+                      Spacer(),
+                      Text('\$$_finalPayout',
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.success)),
                     ],
                   ),
                 ),
@@ -179,15 +194,15 @@ class _WithdrawalReviewPageState extends State<WithdrawalReviewPage> {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
             ),
-            child: Row(
+            child: const Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.warning_amber, size: 18, color: AppColors.warning),
-                const SizedBox(width: 8),
-                const Expanded(
+                Icon(Icons.warning_amber, size: 18, color: AppColors.warning),
+                SizedBox(width: 8),
+                Expanded(
                   child: Text(
                     'This withdrawal will permanently reduce your retirement savings and cannot be reversed once processed. Additional taxes may apply at year-end.',
-                    style: TextStyle(fontSize: 12, color: AppColors.warning, height: 1.4),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.warning, height: 1.4),
                   ),
                 ),
               ],
@@ -196,7 +211,13 @@ class _WithdrawalReviewPageState extends State<WithdrawalReviewPage> {
           const SizedBox(height: 12),
 
           // Agreement
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -207,7 +228,7 @@ class _WithdrawalReviewPageState extends State<WithdrawalReviewPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text('Withdrawal Agreement',
-                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                       const SizedBox(height: 8),
                       GestureDetector(
                         onTap: () => setState(() => _agreed = !_agreed),
@@ -222,10 +243,10 @@ class _WithdrawalReviewPageState extends State<WithdrawalReviewPage> {
                               visualDensity: VisualDensity.compact,
                             ),
                             const SizedBox(width: 8),
-                            Expanded(
+                            const Expanded(
                               child: Text(
                                 'I understand that this withdrawal will permanently reduce my retirement savings, may be subject to taxes and penalties, and cannot be reversed once processed. I have consulted with a financial advisor or understand the consequences of this withdrawal.',
-                                style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant, height: 1.4),
+                                style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextSecondary, height: 1.4),
                               ),
                             ),
                           ],
@@ -252,22 +273,21 @@ class _DetailBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Container(
       width: fullWidth ? double.infinity : null,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest,
+        color: AppColors.lightShell,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: scheme.outline.withValues(alpha: 0.3)),
+        border: Border.all(color: AppColors.lightBorder),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(label.toUpperCase(),
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: scheme.onSurfaceVariant, letterSpacing: 0.5)),
+              style: const TextStyle(fontFamily: 'Inter', fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.lightTextSecondary, letterSpacing: 0.5)),
           const SizedBox(height: 4),
-          Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
+          Text(value, style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
         ],
       ),
     );
@@ -282,13 +302,14 @@ class _DeductionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3, horizontal: 2),
       child: Row(
         children: [
-          Expanded(child: Text(label, style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant))),
-          Text('-\$$amount', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.danger)),
+          Expanded(child: Text(label,
+              style: const TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.lightTextSecondary))),
+          Text('-\$$amount',
+              style: const TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.danger)),
         ],
       ),
     );

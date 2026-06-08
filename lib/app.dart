@@ -19,7 +19,7 @@ class ParticipantPortalApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: themeMode,
+      themeMode: ThemeMode.light, // light-only per design spec
       routerConfig: router,
       localizationsDelegates: const [
         AppLocalizations.delegate,

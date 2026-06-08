@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/widgets/app_card.dart';
 import '../../../../../core/widgets/flow_scaffold.dart';
 
 class RolloverDocumentsPage extends StatefulWidget {
@@ -49,7 +48,6 @@ class _RolloverDocumentsPageState extends State<RolloverDocumentsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return FlowScaffold(
       title: 'Documents',
       currentStep: 4,
@@ -61,18 +59,18 @@ class _RolloverDocumentsPageState extends State<RolloverDocumentsPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Required Documents',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+          const Text('Required Documents',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
           const SizedBox(height: 8),
-          Text('Acknowledge and upload the required documentation to process your rollover.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+          const Text('Acknowledge and upload the required documentation to process your rollover.',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
           const SizedBox(height: 20),
 
           Container(
             padding: const EdgeInsets.all(14),
             margin: const EdgeInsets.only(bottom: 16),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.06),
+              color: AppColors.iconBgBlue,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
             ),
@@ -84,9 +82,10 @@ class _RolloverDocumentsPageState extends State<RolloverDocumentsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Document Checklist', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.primary)),
+                      const Text('Document Checklist',
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.primary)),
                       Text('${_acknowledged.length} of ${_documents.length} acknowledged',
-                          style: const TextStyle(fontSize: 11, color: AppColors.primary)),
+                          style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.primary)),
                     ],
                   ),
                 ),
@@ -98,7 +97,17 @@ class _RolloverDocumentsPageState extends State<RolloverDocumentsPage> {
             final isAcknowledged = _acknowledged.contains(doc.id);
             return Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: AppCard(
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: isAcknowledged ? AppColors.successBg : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: isAcknowledged ? AppColors.success.withValues(alpha: 0.3) : AppColors.lightBorder,
+                    width: isAcknowledged ? 1.5 : 1,
+                  ),
+                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -124,23 +133,20 @@ class _RolloverDocumentsPageState extends State<RolloverDocumentsPage> {
                                 children: [
                                   Expanded(
                                     child: Text(doc.title,
-                                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
+                                        style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                                   ),
                                   if (doc.required)
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.dangerBg,
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
+                                      decoration: BoxDecoration(color: AppColors.dangerBg, borderRadius: BorderRadius.circular(4)),
                                       child: const Text('Required',
-                                          style: TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: AppColors.danger)),
+                                          style: TextStyle(fontFamily: 'Inter', fontSize: 9, fontWeight: FontWeight.w700, color: AppColors.danger)),
                                     ),
                                 ],
                               ),
                               const SizedBox(height: 4),
                               Text(doc.description,
-                                  style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant, height: 1.4)),
+                                  style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.lightTextSecondary, height: 1.4)),
                             ],
                           ),
                         ),
@@ -151,12 +157,13 @@ class _RolloverDocumentsPageState extends State<RolloverDocumentsPage> {
                       OutlinedButton.icon(
                         onPressed: () {},
                         icon: const Icon(Icons.upload, size: 14),
-                        label: const Text('Upload Document', style: TextStyle(fontSize: 12)),
+                        label: const Text('Upload Document', style: TextStyle(fontFamily: 'Inter', fontSize: 12)),
                         style: OutlinedButton.styleFrom(
                           minimumSize: const Size(double.infinity, 36),
                           side: const BorderSide(color: AppColors.primary),
                           foregroundColor: AppColors.primary,
                           padding: const EdgeInsets.symmetric(horizontal: 12),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                       ),
                     ],
@@ -174,15 +181,15 @@ class _RolloverDocumentsPageState extends State<RolloverDocumentsPage> {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
             ),
-            child: Row(
+            child: const Row(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Icon(Icons.warning_amber, size: 16, color: AppColors.warning),
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'Original documents may be required by mail. Processing typically takes 5-10 business days after document submission.',
-                    style: TextStyle(fontSize: 12, color: AppColors.warning, height: 1.4),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.warning, height: 1.4),
                   ),
                 ),
               ],

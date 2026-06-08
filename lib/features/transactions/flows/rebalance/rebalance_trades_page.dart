@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/widgets/app_card.dart';
 import '../../../../../core/widgets/flow_scaffold.dart';
 
 class RebalanceTradesPage extends StatelessWidget {
@@ -18,7 +17,6 @@ class RebalanceTradesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return FlowScaffold(
       title: 'Trade Preview',
       currentStep: 3,
@@ -29,11 +27,11 @@ class RebalanceTradesPage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Trade Preview',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+          const Text('Trade Preview',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
           const SizedBox(height: 8),
-          Text('These trades will be executed to reach your target allocation.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+          const Text('These trades will be executed to reach your target allocation.',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
           const SizedBox(height: 20),
 
           // Summary chips
@@ -51,8 +49,9 @@ class RebalanceTradesPage extends StatelessWidget {
                     children: [
                       const Icon(Icons.trending_down, color: AppColors.danger, size: 20),
                       const SizedBox(height: 4),
-                      Text('${_sells.length} Sell', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.danger)),
-                      Text('\$${_sells.fold(0, (s, t) => s + t.$3)}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: AppColors.danger)),
+                      Text('${_sells.length} Sell', style: const TextStyle(fontFamily: 'Inter', fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.danger)),
+                      Text('\$${_sells.fold(0, (s, t) => s + t.$3)}',
+                          style: const TextStyle(fontFamily: 'Inter', fontSize: 18, fontWeight: FontWeight.w900, color: AppColors.danger)),
                     ],
                   ),
                 ),
@@ -70,8 +69,9 @@ class RebalanceTradesPage extends StatelessWidget {
                     children: [
                       const Icon(Icons.trending_up, color: AppColors.success, size: 20),
                       const SizedBox(height: 4),
-                      Text('${_buys.length} Buy', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.success)),
-                      Text('\$${_buys.fold(0, (s, t) => s + t.$3)}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: AppColors.success)),
+                      Text('${_buys.length} Buy', style: const TextStyle(fontFamily: 'Inter', fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.success)),
+                      Text('\$${_buys.fold(0, (s, t) => s + t.$3)}',
+                          style: const TextStyle(fontFamily: 'Inter', fontSize: 18, fontWeight: FontWeight.w900, color: AppColors.success)),
                     ],
                   ),
                 ),
@@ -81,14 +81,20 @@ class RebalanceTradesPage extends StatelessWidget {
           const SizedBox(height: 20),
 
           // Sell orders
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: [
-                  const Icon(Icons.arrow_upward, color: AppColors.danger, size: 16),
-                  const SizedBox(width: 6),
-                  Text('Sell Orders', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                const Row(children: [
+                  Icon(Icons.arrow_upward, color: AppColors.danger, size: 16),
+                  SizedBox(width: 6),
+                  Text('Sell Orders', style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 ]),
                 const SizedBox(height: 12),
                 ..._sells.map((t) => _TradeRow(name: t.$1, ticker: t.$2, amount: t.$3, color: t.$4, isSell: true)),
@@ -98,14 +104,20 @@ class RebalanceTradesPage extends StatelessWidget {
           const SizedBox(height: 12),
 
           // Buy orders
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: [
-                  const Icon(Icons.arrow_downward, color: AppColors.success, size: 16),
-                  const SizedBox(width: 6),
-                  Text('Buy Orders', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                const Row(children: [
+                  Icon(Icons.arrow_downward, color: AppColors.success, size: 16),
+                  SizedBox(width: 6),
+                  Text('Buy Orders', style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 ]),
                 const SizedBox(height: 12),
                 ..._buys.map((t) => _TradeRow(name: t.$1, ticker: t.$2, amount: t.$3, color: t.$4, isSell: false)),
@@ -117,7 +129,7 @@ class RebalanceTradesPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.06),
+              color: AppColors.iconBgBlue,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
             ),
@@ -129,7 +141,7 @@ class RebalanceTradesPage extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'All trades execute at the next market close (4:00 PM ET). No transaction fees apply to rebalancing within your plan. Prices are based on end-of-day NAV.',
-                    style: TextStyle(fontSize: 12, color: AppColors.primary, height: 1.4),
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 12, color: AppColors.primary, height: 1.4),
                   ),
                 ),
               ],
@@ -151,7 +163,6 @@ class _TradeRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -162,10 +173,10 @@ class _TradeRow extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 32, height: 32,
+            width: 44, height: 44,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(8),
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(isSell ? Icons.remove : Icons.add, color: color, size: 16),
           ),
@@ -174,13 +185,13 @@ class _TradeRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                Text(ticker, style: TextStyle(fontSize: 10, color: scheme.onSurfaceVariant)),
+                Text(name, style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary)),
+                Text(ticker, style: const TextStyle(fontFamily: 'Inter', fontSize: 10, color: AppColors.lightTextSecondary)),
               ],
             ),
           ),
           Text('${isSell ? '-' : '+'}\$$amount',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: color)),
+              style: TextStyle(fontFamily: 'Inter', fontSize: 16, fontWeight: FontWeight.w800, color: color)),
         ],
       ),
     );

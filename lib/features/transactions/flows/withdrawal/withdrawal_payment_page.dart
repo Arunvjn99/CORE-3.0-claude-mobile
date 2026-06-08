@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../../core/router/app_router.dart';
 import '../../../../../core/theme/app_colors.dart';
-import '../../../../../core/widgets/app_card.dart';
 import '../../../../../core/widgets/flow_scaffold.dart';
 
 class WithdrawalPaymentPage extends StatefulWidget {
@@ -38,7 +37,6 @@ class _WithdrawalPaymentPageState extends State<WithdrawalPaymentPage> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return FlowScaffold(
       title: 'Payment Method',
       currentStep: 5,
@@ -50,20 +48,26 @@ class _WithdrawalPaymentPageState extends State<WithdrawalPaymentPage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Payment Method',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+          const Text('Payment Method',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
           const SizedBox(height: 8),
-          Text('Choose how you want to receive your withdrawal funds.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: scheme.onSurfaceVariant)),
+          const Text('Choose how you want to receive your withdrawal funds.',
+              style: TextStyle(fontFamily: 'Inter', fontSize: 14, color: AppColors.lightTextSecondary)),
           const SizedBox(height: 20),
 
           // Disbursement method
-          AppCard(
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Disbursement Method',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                const Text('Disbursement Method',
+                    style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                 const SizedBox(height: 12),
                 _MethodOption(
                   value: 'eft', groupValue: _method, label: 'Electronic Funds Transfer (EFT)',
@@ -83,12 +87,18 @@ class _WithdrawalPaymentPageState extends State<WithdrawalPaymentPage> {
 
           // Bank account (EFT)
           if (_method == 'eft') ...[
-            AppCard(
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Bank Account',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                  const Text('Bank Account',
+                      style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                   const SizedBox(height: 12),
                   DropdownButtonFormField<String>(
                     value: _bankAccount,
@@ -107,24 +117,25 @@ class _WithdrawalPaymentPageState extends State<WithdrawalPaymentPage> {
 
             // Add new bank account
             if (_bankAccount == 'add-new')
-              AppCard(
-                noPadding: true,
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+                ),
                 child: Column(
                   children: [
                     InkWell(
                       onTap: () => setState(() => _addBankOpen = !_addBankOpen),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(16),
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: Row(
                           children: [
                             Container(
-                              width: 36, height: 36,
-                              decoration: BoxDecoration(
-                                color: AppColors.success.withValues(alpha: 0.12),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Icon(Icons.account_balance, color: AppColors.success, size: 18),
+                              width: 44, height: 44,
+                              decoration: BoxDecoration(color: AppColors.iconBgGreen, borderRadius: BorderRadius.circular(12)),
+                              child: const Icon(Icons.account_balance, color: AppColors.success, size: 20),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -132,23 +143,23 @@ class _WithdrawalPaymentPageState extends State<WithdrawalPaymentPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text('New Bank Account Details',
-                                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                                  Text('Account number, routing number, and type',
-                                      style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant)),
+                                      style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary)),
+                                  const Text('Account number, routing number, and type',
+                                      style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.lightTextSecondary)),
                                 ],
                               ),
                             ),
                             AnimatedRotation(
                               turns: _addBankOpen ? 0.5 : 0,
                               duration: const Duration(milliseconds: 200),
-                              child: Icon(Icons.keyboard_arrow_down, color: scheme.onSurfaceVariant),
+                              child: const Icon(Icons.keyboard_arrow_down, color: AppColors.lightTextSecondary),
                             ),
                           ],
                         ),
                       ),
                     ),
                     if (_addBankOpen) ...[
-                      Divider(height: 1, color: scheme.outline.withValues(alpha: 0.3)),
+                      Divider(height: 1, color: AppColors.lightBorder),
                       Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(
@@ -187,19 +198,19 @@ class _WithdrawalPaymentPageState extends State<WithdrawalPaymentPage> {
                             Container(
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: AppColors.primary.withValues(alpha: 0.06),
+                                color: AppColors.iconBgBlue,
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
                               ),
-                              child: Row(
+                              child: const Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Icon(Icons.info_outline, size: 14, color: AppColors.primary),
-                                  const SizedBox(width: 8),
-                                  const Expanded(
+                                  Icon(Icons.info_outline, size: 14, color: AppColors.primary),
+                                  SizedBox(width: 8),
+                                  Expanded(
                                     child: Text(
                                       'A micro-deposit verification may be required. Two small deposits will be sent to your account within 1-2 business days for verification.',
-                                      style: TextStyle(fontSize: 11, color: AppColors.primary, height: 1.4),
+                                      style: TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.primary, height: 1.4),
                                     ),
                                   ),
                                 ],
@@ -216,12 +227,18 @@ class _WithdrawalPaymentPageState extends State<WithdrawalPaymentPage> {
 
           // Mailing address (Check)
           if (_method == 'check') ...[
-            AppCard(
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))],
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Mailing Address',
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                  const Text('Mailing Address',
+                      style: TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.lightTextPrimary)),
                   const SizedBox(height: 12),
                   _MethodOption(
                     value: 'employee', groupValue: _addressType,
@@ -245,11 +262,7 @@ class _WithdrawalPaymentPageState extends State<WithdrawalPaymentPage> {
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        Expanded(
-                          child: TextFormField(
-                            decoration: const InputDecoration(labelText: 'City'),
-                          ),
-                        ),
+                        Expanded(child: TextFormField(decoration: const InputDecoration(labelText: 'City'))),
                         const SizedBox(width: 12),
                         Expanded(
                           child: TextFormField(
@@ -290,16 +303,15 @@ class _MethodOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final selected = value == groupValue;
     return GestureDetector(
       onTap: () => onChanged(value),
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: selected ? AppColors.primary : scheme.outline),
-          color: selected ? AppColors.primary.withValues(alpha: 0.05) : null,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: selected ? AppColors.primary : AppColors.lightBorder, width: selected ? 1.5 : 1),
+          color: selected ? AppColors.primary.withValues(alpha: 0.05) : Colors.white,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -315,9 +327,9 @@ class _MethodOption extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                  Text(label, style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.lightTextPrimary)),
                   const SizedBox(height: 2),
-                  Text(description, style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant, height: 1.4)),
+                  Text(description, style: const TextStyle(fontFamily: 'Inter', fontSize: 11, color: AppColors.lightTextSecondary, height: 1.4)),
                 ],
               ),
             ),

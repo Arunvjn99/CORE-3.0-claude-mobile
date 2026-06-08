@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../../core/router/app_router.dart';
 import '../../../core/providers/enrollment_provider.dart';
 import '../../../core/models/enrollment_model.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/widgets/flow_scaffold.dart';
+import '../widgets/enrollment_scaffold.dart';
 
+/// Choose Your Retirement Plan — Step 1/7
+/// Matches Figma "Plan Selection" (2230:4291)
 class PlanSelectionPage extends ConsumerStatefulWidget {
   const PlanSelectionPage({super.key});
 
@@ -15,215 +17,120 @@ class PlanSelectionPage extends ConsumerStatefulWidget {
 }
 
 class _PlanSelectionPageState extends ConsumerState<PlanSelectionPage> {
-  PlanType? _selected;
+  PlanType _selected = PlanType.traditional;
 
-  @override
-  void initState() {
-    super.initState();
-    _selected = ref.read(enrollmentProvider).plan;
-  }
-
-  void _showAiSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (_) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(children: [
-              Container(width: 36, height: 36, decoration: const BoxDecoration(gradient: LinearGradient(colors: [AppColors.primary, Color(0xFF7C3AED)]), shape: BoxShape.circle), child: const Icon(Icons.psychology, color: Colors.white, size: 18)),
-              const SizedBox(width: 12),
-              const Text('Ask Core AI', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-            ]),
-            const SizedBox(height: 16),
-            const Text('Traditional 401(k) vs Roth 401(k)', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF111827))),
-            const SizedBox(height: 8),
-            const Text('Choose Traditional if you expect to be in a lower tax bracket at retirement — your contributions reduce taxes today.\n\nChoose Roth if you expect higher taxes later — you pay taxes now, but all growth and withdrawals are tax-free.\n\nMost participants under 40 benefit from Roth. Near retirement? Traditional often wins.', style: TextStyle(fontSize: 13, color: Color(0xFF374151), height: 1.6)),
-            const SizedBox(height: 24),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showCompareSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (_) => Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-        ),
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Plan Comparison', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-            const SizedBox(height: 16),
-            _CompareRow(feature: 'Tax Treatment', traditional: 'Pre-tax (reduce now)', roth: 'After-tax (tax-free later)'),
-            _CompareRow(feature: 'Withdrawals', traditional: 'Taxed at retirement', roth: 'Tax-free if qualified'),
-            _CompareRow(feature: 'RMDs at 73', traditional: 'Required', roth: 'Not required'),
-            _CompareRow(feature: 'Best for', traditional: 'Higher tax bracket now', roth: 'Lower tax bracket now'),
-            _CompareRow(feature: 'Employer Match', traditional: 'Yes', roth: 'Yes'),
-            const SizedBox(height: 24),
-          ],
-        ),
-      ),
-    );
+  void _next() {
+    ref.read(enrollmentProvider.notifier).setPlan(_selected);
+    context.push(AppRoutes.enrollmentContribution);
   }
 
   @override
   Widget build(BuildContext context) {
-    return FlowScaffold(
-      title: 'Choose Your Plan',
-      currentStep: 1,
-      totalSteps: 8,
-      primaryLabel: 'Continue',
-      primaryEnabled: _selected != null,
-      showBack: false,
-      onPrimary: () {
-        ref.read(enrollmentProvider.notifier).setPlan(_selected!);
-        context.go(AppRoutes.enrollmentContribution);
-      },
-      body: Column(
+    return EnrollmentScaffold(
+      stepName: 'Plan Selection',
+      stepNumber: 1,
+      totalSteps: 7,
+      bottomButton: EnrollmentButton(label: 'Continue to Contribution', onTap: _next),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Select your retirement plan type',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700),
+          const Text(
+            'Choose Your Retirement Plan',
+            style: TextStyle(fontFamily: 'Lato', fontSize: 28, fontWeight: FontWeight.w900, color: Color(0xFF0F172A), height: 1.2),
           ),
-          const SizedBox(height: 6),
-          Text(
-            'Your employer offers these 401(k) options. Both offer tax advantages and employer matching.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+          const SizedBox(height: 8),
+          const Text(
+            'Select the plan that best aligns with your financial goals and tax strategy.',
+            style: TextStyle(fontFamily: 'Lato', fontSize: 15, color: Color(0xFF64748B), height: 1.5),
           ),
-          const SizedBox(height: 28),
+          const SizedBox(height: 24),
 
+          // Traditional 401(k) card
           _PlanCard(
-            type: PlanType.traditional,
+            title: 'Traditional 401(k)',
+            subtitle: 'Pre-tax contributions',
             isSelected: _selected == PlanType.traditional,
+            badge: 'RECOMMENDED',
+            badgeColor: const Color(0xFF2563EB),
+            benefits: [
+              ('trending_down', 'Lower taxable income today', const Color(0xFF10B981)),
+              ('card_giftcard', 'Employer match eligible', const Color(0xFF2563EB)),
+              ('shield_outlined', 'Tax-deferred growth', const Color(0xFF2563EB)),
+            ],
+            aiInsight: 'Based on your age (36) and tax bracket, a Traditional 401(k) offers the highest immediate tax savings.',
             onTap: () => setState(() => _selected = PlanType.traditional),
           ),
-          const SizedBox(height: 12),
+
+          const SizedBox(height: 14),
+
+          // Roth 401(k) card
           _PlanCard(
-            type: PlanType.roth,
+            title: 'Roth 401(k)',
+            subtitle: 'Post-tax contributions',
             isSelected: _selected == PlanType.roth,
+            badge: null,
+            badgeColor: const Color(0xFF10B981),
+            benefits: [
+              ('check_circle_outline', 'Tax-free withdrawals in retirement', const Color(0xFF2563EB)),
+              ('shuffle', 'Flexible retirement income', const Color(0xFF2563EB)),
+              ('event_busy', 'No required minimum distributions', const Color(0xFF2563EB)),
+            ],
+            aiInsight: null,
             onTap: () => setState(() => _selected = PlanType.roth),
           ),
+
           const SizedBox(height: 20),
 
-          // Ask AI + Compare Plans bar (matches desktop)
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF8F9FF),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppColors.primary.withValues(alpha: 0.15)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Not sure which plan is right for you?',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF111827)),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Our AI assistant can help explain the differences.',
-                  style: TextStyle(fontSize: 12, color: Color(0xFF6B7280)),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => _showAiSheet(context),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.psychology_outlined, color: Colors.white, size: 16),
-                              SizedBox(width: 6),
-                              Text('Ask AI', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white)),
-                            ],
-                          ),
-                        ),
-                      ),
+          // Bottom action buttons
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF1F5F9),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => _showCompareSheet(context),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: AppColors.primary.withValues(alpha: 0.4)),
-                          ),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.compare_arrows, color: AppColors.primary, size: 16),
-                              SizedBox(width: 6),
-                              Text('Compare Plans', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.primary)),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 16),
-
-          // Info box
-          Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: AppColors.infoBg,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppColors.info.withValues(alpha: 0.3)),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Icon(Icons.info_outline, color: AppColors.info, size: 18),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    'Not sure which to choose? Consider your current tax bracket and expected tax situation at retirement.',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.info,
-                      height: 1.4,
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.compare_arrows_rounded, size: 16, color: Color(0xFF0F172A)),
+                        SizedBox(width: 6),
+                        Text('Compare Plans', style: TextStyle(fontFamily: 'Lato', fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+                      ],
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => context.push(AppRoutes.aiAssistant),
+                  child: Container(
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF1F5F9),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.chat_bubble_outline_rounded, size: 16, color: Color(0xFF0F172A)),
+                        SizedBox(width: 6),
+                        Text('Ask CORE AI', style: TextStyle(fontFamily: 'Lato', fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
+
+          const SizedBox(height: 60),
         ],
       ),
     );
@@ -231,146 +138,186 @@ class _PlanSelectionPageState extends ConsumerState<PlanSelectionPage> {
 }
 
 class _PlanCard extends StatelessWidget {
-  final PlanType type;
+  const _PlanCard({
+    required this.title,
+    required this.subtitle,
+    required this.isSelected,
+    required this.badge,
+    required this.badgeColor,
+    required this.benefits,
+    required this.aiInsight,
+    required this.onTap,
+  });
+
+  final String title;
+  final String subtitle;
   final bool isSelected;
+  final String? badge;
+  final Color badgeColor;
+  final List<(String, String, Color)> benefits;
+  final String? aiInsight;
   final VoidCallback onTap;
-
-  const _PlanCard({required this.type, required this.isSelected, required this.onTap});
-
-  bool get isTraditional => type == PlanType.traditional;
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final color = isTraditional ? AppColors.primary : AppColors.success;
-
     return GestureDetector(
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          color: isSelected ? color.withValues(alpha: 0.07) : scheme.surfaceContainer,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: isSelected ? color : scheme.outline.withValues(alpha: 0.6),
-            width: isSelected ? 2 : 1,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (isTraditional) ...[
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                margin: const EdgeInsets.only(bottom: 10),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFFBEB),
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: const Color(0xFFF59E0B).withValues(alpha: 0.4)),
-                ),
-                child: const Text('Most Common Choice', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFFD97706))),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: isSelected ? const Color(0xFF2563EB) : const Color(0xFFE2E8F0),
+                width: isSelected ? 2 : 1,
               ),
-            ],
-            Row(
-              children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(
-                    isTraditional ? Icons.account_balance : Icons.show_chart,
-                    color: color,
-                    size: 22,
-                  ),
+              boxShadow: [
+                BoxShadow(
+                  color: isSelected
+                      ? const Color(0xFF2563EB).withValues(alpha: 0.08)
+                      : Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        isTraditional ? 'Traditional 401(k)' : 'Roth 401(k)',
-                        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
-                      ),
-                      Text(
-                        isTraditional ? 'Pre-tax contributions' : 'After-tax contributions',
-                        style: TextStyle(fontSize: 12, color: color, fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  ),
-                ),
-                if (isSelected)
-                  Container(
-                    width: 24,
-                    height: 24,
-                    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-                    child: const Icon(Icons.check, color: Colors.white, size: 14),
-                  )
-                else
-                  Container(
-                    width: 24,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(color: scheme.outline),
-                    ),
-                  ),
               ],
             ),
-            const SizedBox(height: 14),
-            const Divider(height: 1),
-            const SizedBox(height: 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: const TextStyle(fontFamily: 'Lato', fontSize: 18, fontWeight: FontWeight.w900, color: Color(0xFF0F172A)),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            subtitle,
+                            style: const TextStyle(fontFamily: 'Lato', fontSize: 13, color: Color(0xFF64748B)),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: 22,
+                      height: 22,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isSelected ? const Color(0xFF2563EB) : const Color(0xFFCBD5E1),
+                          width: isSelected ? 2 : 1.5,
+                        ),
+                        color: Colors.white,
+                      ),
+                      child: isSelected
+                          ? Center(
+                              child: Container(
+                                width: 12,
+                                height: 12,
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Color(0xFF2563EB),
+                                ),
+                              ),
+                            )
+                          : null,
+                    ),
+                  ],
+                ),
 
-            // Feature list
-            ..._features.map((f) => Padding(
-              padding: const EdgeInsets.only(bottom: 6),
-              child: Row(
-                children: [
-                  Icon(Icons.check_circle_outline, size: 14, color: color),
-                  const SizedBox(width: 8),
-                  Text(f, style: const TextStyle(fontSize: 12)),
+                const SizedBox(height: 16),
+
+                // Benefits
+                ...benefits.map((b) => Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 28,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          color: b.$3.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(_iconForKey(b.$1), size: 15, color: b.$3),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(b.$2, style: const TextStyle(fontFamily: 'Lato', fontSize: 14, color: Color(0xFF0F172A))),
+                    ],
+                  ),
+                )),
+
+                // AI Insight
+                if (aiInsight != null) ...[
+                  const SizedBox(height: 4),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFEFF6FF),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.auto_awesome_rounded, size: 16, color: Color(0xFF2563EB)),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('AI INSIGHT', style: TextStyle(fontFamily: 'Lato', fontSize: 10, fontWeight: FontWeight.w900, color: Color(0xFF2563EB), letterSpacing: 0.5)),
+                              const SizedBox(height: 3),
+                              Text(aiInsight!, style: const TextStyle(fontFamily: 'Lato', fontSize: 12, color: Color(0xFF2563EB), height: 1.4)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
+              ],
+            ),
+          ),
+
+          // Badge
+          if (badge != null)
+            Positioned(
+              top: -1,
+              right: 16,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: badgeColor,
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(10)),
+                ),
+                child: Text(
+                  badge!,
+                  style: const TextStyle(fontFamily: 'Lato', fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 0.5),
+                ),
               ),
-            )),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }
 
-  List<String> get _features => isTraditional
-      ? ['Reduce taxable income now', 'Pay taxes at withdrawal', 'Required distributions at 73']
-      : ['No tax on qualified withdrawals', 'No required minimum distributions', 'Tax-free growth potential'];
-}
-
-class _CompareRow extends StatelessWidget {
-  final String feature;
-  final String traditional;
-  final String roth;
-  const _CompareRow({required this.feature, required this.traditional, required this.roth});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(feature, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF9CA3AF))),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Expanded(child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.06), borderRadius: BorderRadius.circular(8)), child: Text(traditional, style: const TextStyle(fontSize: 12, color: AppColors.primary, fontWeight: FontWeight.w500)))),
-              const SizedBox(width: 8),
-              Expanded(child: Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: AppColors.success.withValues(alpha: 0.06), borderRadius: BorderRadius.circular(8)), child: Text(roth, style: const TextStyle(fontSize: 12, color: AppColors.success, fontWeight: FontWeight.w500)))),
-            ],
-          ),
-        ],
-      ),
-    );
+  IconData _iconForKey(String key) {
+    switch (key) {
+      case 'trending_down': return Icons.trending_down_rounded;
+      case 'card_giftcard': return Icons.card_giftcard_outlined;
+      case 'shield_outlined': return Icons.shield_outlined;
+      case 'check_circle_outline': return Icons.check_circle_outline_rounded;
+      case 'shuffle': return Icons.shuffle_rounded;
+      case 'event_busy': return Icons.event_busy_outlined;
+      default: return Icons.check_rounded;
+    }
   }
 }

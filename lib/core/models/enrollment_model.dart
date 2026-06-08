@@ -1,7 +1,11 @@
 enum PlanType { traditional, roth }
+
 enum ContributionType { percentage, fixed }
+
 enum SourceType { pretax, roth, split }
+
 enum RiskLevel { conservative, balanced, growth, aggressive }
+
 enum EnrollmentStatus { notStarted, inProgress, complete }
 
 class EnrollmentDraft {
